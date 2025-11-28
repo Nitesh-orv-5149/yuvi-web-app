@@ -18,12 +18,14 @@ npm run dev
 
 **ex routes:**
 
-app/(site)/ = *localhost:3000/*
+app/(site)/page.jsx = *localhost:3000/*
 
-app/(site)/profile = *localhost:3000/profile*
+app/(site)/profile/page.jsx = *localhost:3000/profile*
 
-app/(site)/query/post = *localhost:3000/query/post*
+app/(site)/query/post/page.jsx = *localhost:3000/query/post*
 
-app/api/query/post = *localhost:3000/api/query/post*
+app/api/query/post/page.js = *localhost:3000/api/query/post*
+
+### - *Also only 1 page.jsx/js per folder* ###
 
 ### As you can see the folder structure is the routes
