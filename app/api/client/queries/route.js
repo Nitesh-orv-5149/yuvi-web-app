@@ -1,16 +1,17 @@
 import { db } from "@/lib/db";
-import { posts } from "@/lib/schema/index";
+import { queries } from "@/lib/schema";
 import { randomUUID } from "crypto";
 
 export async function POST(req) {
   try {
     const { questionTitle, questionBody, clientId, categoryId } = await req.json();
 
-    if (!clientId || !categoryId)
-      return Response.json({ error: "clientId and categoryId are required" }, { status: 400 });
+    if (!clientId || !categoryId) {
+      return Response.json({ error: "clientId and categoryId required" }, { status: 400 });
+    }
 
-    const [created] = await db.insert(posts).values({
-      postId: randomUUID(),
+    const [created] = await db.insert(queries).values({
+      queryId: randomUUID(),
       questionTitle,
       questionBody,
       clientId,
@@ -18,8 +19,7 @@ export async function POST(req) {
     }).returning();
 
     return Response.json(created, { status: 201 });
-
-  } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+  } catch (err) {
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
