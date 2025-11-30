@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function SignInPage() {
   const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -61,6 +62,8 @@ export default function SignInPage() {
       {errorMsg && (
         <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>
       )}
+
+      <button onClick={() => signOut({redirect: true, callbackUrl: `${process.env.NEXT_PUBLIC_URL}/signedout`,})}>signout</button>
     </div>
   );
 }
