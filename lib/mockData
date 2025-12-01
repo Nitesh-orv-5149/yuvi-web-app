@@ -1,0 +1,79 @@
+export const expertProfile = {
+  id: 'expert1',
+  name: 'Alex Johnson',
+  email: 'alex.j@expert.com',
+  avatar: 'A',
+  stats: {
+    queries: 15,
+    answers: 124,
+    rating: 4.9,
+  },
+  answeredQueries: [
+    { id: 'q1', title: 'How to optimize React performance with useMemo?', answers: 2 },
+    { id: 'q2', title: 'Best practices for Next.js API routes security?', answers: 3 },
+    { id: 'q3', title: 'Understanding CSS Grid Layout', answers: 1 },
+  ],
+};
+
+export const mockQueries = [
+  {
+    id: '1',
+    title: 'How to optimize React performance with useMemo?',
+    category: 'React',
+    description: 'I have a large list rendering slowly. Need optimization tips for React components.',
+    clientName: 'Arjun Sharma',
+    clientAvatar: 'A',
+    createdAt: new Date('2025-11-28'),
+    status: 'pending', 
+  },
+  {
+    id: '2',
+    title: 'Implementing secure serverless authentication with AWS Lambda?',
+    category: 'AWS',
+    description: 'Looking for a robust, scalable way to handle user authentication in a serverless environment.',
+    clientName: 'Priya Patel',
+    clientAvatar: 'P',
+    createdAt: new Date('2025-11-27'),
+    status: 'pending',
+  },
+  {
+    id: '3',
+    title: 'Tailwind CSS vs utility-first alternatives: which is better?',
+    category: 'CSS',
+    description: 'Evaluating different modern CSS frameworks for performance and maintainability.',
+    clientName: 'Vikram Singh',
+    clientAvatar: 'V',
+    createdAt: new Date('2025-11-26'),
+    status: 'answered',
+  },
+];
+
+export const mockChatClients = [
+  {
+    id: '1',
+    name: 'Sarah Dev',
+    avatar: 'S',
+    lastMessage: 'Thanks for the detailed response on useMemo!',
+    timestamp: '2m ago',
+    unread: true,
+    context: 'React Query Optimization',
+  },
+  {
+    id: '2',
+    name: 'Raj Kumar',
+    avatar: 'R',
+    lastMessage: 'I understand the security risks now, thanks.',
+    timestamp: '1h ago',
+    unread: false,
+    context: 'Next.js API Security',
+  },
+  {
+    id: '3',
+    name: 'Emily Chen',
+    avatar: 'E',
+    lastMessage: 'The Python solution worked perfectly!',
+    timestamp: '3h ago',
+    unread: true,
+    context: 'Django ORM Issue',
+  },
+];

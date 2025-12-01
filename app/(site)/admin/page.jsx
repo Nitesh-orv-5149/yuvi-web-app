@@ -1,4 +1,4 @@
-"use client";   
+/* "use client";   
 
 import React, { useState } from 'react';
 import { Home, Menu, User } from 'lucide-react';
@@ -259,4 +259,4 @@ const AdminApp = () => {
   );
 };
 
-export default AdminApp;
+export default AdminApp;*/
