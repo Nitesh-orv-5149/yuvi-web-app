@@ -1,25 +1,54 @@
 import { db } from "@/lib/db";
-import { queries } from "@/lib/schema";
+import { queries, clients, categories } from "@/lib/schema";
 import { randomUUID } from "crypto";
+import { eq } from "drizzle-orm";
 
 export async function POST(req) {
   try {
-    const { questionTitle, questionBody, clientId, categoryId } = await req.json();
+    const body = await req.json();
+    const { questionTitle, questionBody, clientId, categoryId } = body;
 
-    if (!clientId || !categoryId) {
-      return Response.json({ error: "clientId and categoryId required" }, { status: 400 });
+    // Validate fields
+    if (!questionTitle?.trim()) {
+      return Response.json({ error: "questionTitle is required" }, { status: 400 });
     }
 
+    if (!questionBody?.trim()) {
+      return Response.json({ error: "questionBody is required" }, { status: 400 });
+    }
+
+    if (!clientId?.trim()) {
+      return Response.json({ error: "clientId is required" }, { status: 400 });
+    }
+
+    if (!categoryId?.trim()) {
+      return Response.json({ error: "categoryId is required" }, { status: 400 });
+    }
+
+    // Check client exists
+    const clientCheck = await db.select().from(clients).where(eq(clients.clientId, clientId));
+    if (clientCheck.length === 0) {
+      return Response.json({ error: "Client does not exist" }, { status: 404 });
+    }
+
+    // Check category exists
+    const categoryCheck = await db.select().from(categories).where(eq(categories.name, categoryId));
+    if (categoryCheck.length === 0) {
+      return Response.json({ error: "Category does not exist" }, { status: 404 });
+    }
+
+    // Create query
     const [created] = await db.insert(queries).values({
       queryId: randomUUID(),
-      questionTitle,
-      questionBody,
+      questionTitle: questionTitle.trim(),
+      questionBody: questionBody.trim(),
       clientId,
       categoryId,
     }).returning();
 
     return Response.json(created, { status: 201 });
+
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    return Response.json({ error: "Internal server error", details: err.message }, { status: 500 });
   }
 }

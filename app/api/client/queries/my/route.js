@@ -6,14 +6,14 @@ export async function GET(req) {
   try {
     const clientId = req.nextUrl.searchParams.get("clientId");
 
-    if (!clientId) {
-      return Response.json({ error: "clientId required" }, { status: 400 });
+    if (!clientId?.trim()) {
+      return Response.json({ error: "clientId query param required" }, { status: 400 });
     }
 
-    const result = await db.select().from(queries).where(eq(queries.clientId, clientId));
+    const rows = await db.select().from(queries).where(eq(queries.clientId, clientId));
 
-    return Response.json(result);
+    return Response.json(rows);
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    return Response.json({ error: "Internal server error", details: err.message }, { status: 500 });
   }
 }
