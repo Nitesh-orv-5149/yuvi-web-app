@@ -12,9 +12,9 @@ export default function ClientNavbar() {
           <div className="w-10 h-10 bg-gradient-to-br from-[#00d4ff] to-[#ff006e] rounded-xl flex items-center justify-center">
             <span className="text-lg">💡</span>
           </div>
-          <span className="font-bold text-lg gradient-text">Expert QA</span>
+          <span className="font-bold text-lg gradient-text">Client</span>
         </Link>
-
+    
         <div className="flex items-center gap-4">
           {session && (
             <div className="flex items-center gap-2">
