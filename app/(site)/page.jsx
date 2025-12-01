@@ -17,7 +17,7 @@ export default function SignInPage() {
     const res = await signIn("credentials", {
       identifier: emailOrUsername,  // could be email or username
       password,
-      role: "admin",
+      role: "expert",
       redirect: false,
     });
 

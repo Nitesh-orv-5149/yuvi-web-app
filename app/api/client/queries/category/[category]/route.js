@@ -1,10 +1,20 @@
 import { db } from "@/lib/db";
-import { queries, answers } from "@/lib/schema";
+import { queries, answers, categories } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(req, { params }) {
   try {
     const { category } = params;
+
+    if (!category?.trim()) {
+      return Response.json({ error: "Category is required" }, { status: 400 });
+    }
+
+    // Validate category exists
+    const check = await db.select().from(categories).where(eq(categories.name, category));
+    if (check.length === 0) {
+      return Response.json({ error: "Category does not exist" }, { status: 404 });
+    }
 
     const rows = await db
       .select()
@@ -14,6 +24,6 @@ export async function GET(req, { params }) {
 
     return Response.json(rows);
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    return Response.json({ error: "Internal server error", details: err.message }, { status: 500 });
   }
 }

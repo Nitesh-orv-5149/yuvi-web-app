@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { categories, experts } from "@/lib/schema";
 import { db } from "@/lib/db";
 
+
+// Expert Signup
 export async function POST(req) {
   try {
     const body = await req.json();

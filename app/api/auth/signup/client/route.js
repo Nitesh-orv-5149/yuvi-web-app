@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { clients } from "@/lib/schema";
 import { db } from "@/lib/db";
 
+
+// Client Signup
 export async function POST(req) {
   try {
     const body = await req.json();
