@@ -17,7 +17,7 @@ export default function SignInPage() {
     const res = await signIn("credentials", {
       identifier: emailOrUsername,  // could be email or username
       password,
-      role: "expert",
+      role: "admin",
       redirect: false,
     });
 
@@ -29,7 +29,7 @@ export default function SignInPage() {
     }
 
     // If login success, redirect manually
-    window.location.href = "/succes";
+    window.location.href = "/success";
   }
 
   return (
