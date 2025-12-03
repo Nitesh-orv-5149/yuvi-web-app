@@ -3,23 +3,16 @@ import { queries } from "@/lib/schema/index";
 import jwt from "jsonwebtoken";
 import { eq } from "drizzle-orm";
 import { experts,queries } from "@/lib/schema/index";
+import { requireSession } from "@/lib/auth/requireSession";
 
 export async function GET(request) {
   try {
-    const token = request.headers.get("authorization")?.split(" ")[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const session = await requireSession()
 
     const expertData = await db
       .select()
       .from(experts)
-      .where(eq(experts.expertId, payload.id))
+      .where(eq(experts.expertId, session.user.id))
       .limit(1);
 
     if (expertData.length === 0) {

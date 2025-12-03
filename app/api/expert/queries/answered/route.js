@@ -3,31 +3,13 @@ import { queries, answers, experts } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { randomUUID } from "crypto";
+import { requireSession } from "@/lib/auth/requireSession";
 
 export async function GET(req) {
   try {
-    const authHeader = req.headers.get("authorization");
+    const session = await requireSession()
 
-    if (!authHeader) {
-      return new Response("Authorization header missing", { status: 401 });
-    }
-
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      return new Response("Token missing", { status: 401 });
-    }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      return new Response("Invalid token", { status: 401 });
-    }
-
-    const expertId = decoded.expertId;
-    if (!expertId) {
-      return new Response("Invalid token payload", { status: 401 });
-    }
+    const expertId = session.user.id
 
     const result = await db
       .selectDistinct({
@@ -55,21 +37,12 @@ export async function GET(req) {
 
 export async function POST(request) {
   try {
-
-    const token = request.headers.get("authorization")?.split(" ")[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const session = await requireSession()
 
     const expertData = await db
       .select()
       .from(experts)
-      .where(eq(experts.expertId, payload.id))
+      .where(eq(experts.expertId, session.user.id))
       .limit(1);
 
     if (expertData.length === 0) {
@@ -154,22 +127,7 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
-    const token = request.headers.get("authorization")?.split(" ")[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    let payload;
-    try {
-      payload = jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-      });
-    }
+    const session = await requireSession()
 
     const { answerId } = await request.json();
 
@@ -196,7 +154,7 @@ export async function DELETE(request) {
       );
     }
 
-    if (existing[0].expertId !== payload.id) {
+    if (existing[0].expertId !== session.user.id) {
       return new Response(
         JSON.stringify({ error: "Not allowed to delete this answer" }),
         { status: 403 }
