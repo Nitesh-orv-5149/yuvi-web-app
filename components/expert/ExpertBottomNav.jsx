@@ -1,40 +1,36 @@
-// yuvi-web-app/components/expert/ExpertBottomNav.jsx
+'use client';
 
-
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Home, MessageSquare, User } from 'lucide-react';
 
-export default function ExpertBottomNav({ activeTab, onTabChange }) {
+export default function ExpertBottomNav() {
+  const pathname = usePathname();
+
   const navItems = [
-    { id: 'home', icon: Home, label: 'Home' },
-    { id: 'message', icon: MessageSquare, label: 'Messages' },
-    { id: 'profile', icon: User, label: 'Profile' },
+    { id: 'home', icon: Home, label: 'Home', path: '/expert/home' },
+    { id: 'message', icon: MessageSquare, label: 'Messages', path: '/expert/messages' },
+    { id: 'profile', icon: User, label: 'Profile', path: '/expert/profile' },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-md border-t border-slate-800 shadow-2xl shadow-black/50">
-      <div className="max-w-2xl mx-auto flex justify-around items-center h-20 px-4">
+    <div className="fixed bottom-0 left-0 right-0 bg-slate-900/60 backdrop-blur-xl border-t border-slate-800 py-2 px-8 z-50">
+      <div className="flex justify-between max-w-2xl mx-auto">
         {navItems.map((item) => {
-          const isActive = activeTab === item.id;
+          const active = pathname === item.path;
           const Icon = item.icon;
+
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => onTabChange(item.id)}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
-                isActive 
-                  ? 'text-cyan-400 font-semibold scale-105' 
-                  : 'text-slate-400 hover:text-white'
+              href={item.path}
+              className={`flex flex-col items-center gap-1 text-sm font-medium transition-all ${
+                active ? 'text-cyan-400' : 'text-slate-500 hover:text-cyan-300'
               }`}
             >
-              <div 
-                className={`p-2 rounded-full transition-colors duration-200 ${
-                  isActive ? 'bg-cyan-500/20' : 'bg-transparent group-hover:bg-slate-800'
-                }`}
-              >
-                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-              </div>
-              <span className="text-xs mt-1">{item.label}</span>
-            </button>
+              <Icon size={22} />
+              {item.label}
+            </Link>
           );
         })}
       </div>

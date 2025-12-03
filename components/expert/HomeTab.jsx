@@ -7,21 +7,20 @@ import { ArrowLeft, Send, Clock, CheckCircle2 } from 'lucide-react';
 export default function HomeTab() {
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [answer, setAnswer] = useState('');
-  
-  // Calculate pending queries
+
   const pendingCount = mockQueries.filter(q => q.status === 'pending').length;
 
-  // Detail View (Query Answer Form)
+  // Detail View
   if (selectedQuery) {
     return (
       <div className="animate-in slide-in-from-right duration-300 pb-24 px-4">
-        <button 
+        <button
           onClick={() => setSelectedQuery(null)}
           className="flex items-center text-gray-400 hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft size={20} className="mr-2" /> Back to Queries
         </button>
-        
+
         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 sm:p-6 space-y-6 backdrop-blur-sm">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
             <h2 className="text-xl font-bold text-white leading-tight min-w-0">{selectedQuery.title}</h2>
@@ -29,7 +28,7 @@ export default function HomeTab() {
               {selectedQuery.category}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-3 text-sm text-gray-400 border-b border-slate-800 pb-4">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg shadow-cyan-500/20">
               {selectedQuery.clientAvatar}
@@ -56,7 +55,7 @@ export default function HomeTab() {
                 placeholder="Type your expert answer here..."
                 className="w-full px-5 py-4 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 min-h-[150px] resize-none transition-all"
               />
-              <button 
+              <button
                 className="absolute bottom-4 right-4 p-2.5 bg-cyan-500 text-white rounded-full hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95"
                 onClick={() => {
                   if (answer.trim()) {
@@ -75,31 +74,36 @@ export default function HomeTab() {
     );
   }
 
-  // List View
+  // Main Dashboard View
   return (
     <div className="animate-in fade-in duration-500 pb-24 space-y-8">
+      
       {/* Header Section */}
-      <div className="flex flex-col items-center pt-8 space-y-4">
-        <div className="w-20 h-20 flex items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 shadow-xl shadow-cyan-500/10 overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="flex flex-col items-center pt-8 space-y-4 px-4 relative">
+
+        {/* Logo moved to top-right */}
+        <div className="absolute top-4 right-4 w-12 h-12 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 shadow-lg shadow-cyan-500/20 overflow-hidden group hover:scale-105 transition-transform cursor-pointer">
           <img
-            src="/yuvilogo.png" 
+            src="/yuvilogo.png"
             alt="YuviCollab icon"
-            className="w-16 h-16 object-contain relative z-10"
+            className="w-9 h-9 object-contain"
           />
         </div>
-        <h1 className="text-3xl font-bold">
-          <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            YuviCollab
+
+        {/* Central Heading */}
+        <h1 className="text-3xl font-bold text-center">
+          <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-sm">
+            Expert Dashboard
           </span>
         </h1>
+
       </div>
-      
+
       {/* Pending Queries Stats Box */}
       <div className="mx-auto max-w-full sm:max-w-sm transform hover:scale-[1.02] transition-transform duration-300 px-4">
         <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex items-center justify-between shadow-lg shadow-black/20 backdrop-blur-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl -mr-10 -mt-10" />
-          
+
           <div className="relative z-10">
             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Pending Queries</p>
             <p className="text-3xl font-bold text-white">{pendingCount}</p>
@@ -116,7 +120,7 @@ export default function HomeTab() {
           <h2 className="text-lg font-semibold text-white">Client Queries</h2>
           <span className="text-xs text-slate-500">{mockQueries.length} total</span>
         </div>
-        
+
         <div className="space-y-4">
           {mockQueries.map((query) => (
             <div
@@ -146,8 +150,7 @@ export default function HomeTab() {
                   </div>
                 </div>
               </div>
-              
-              {/* Status Badge */}
+
               <div className="absolute top-4 right-4 sm:top-5 sm:right-5">
                 {query.status === 'pending' ? (
                   <span className="flex items-center gap-1 text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border border-amber-400/20">
@@ -159,10 +162,13 @@ export default function HomeTab() {
                   </span>
                 )}
               </div>
+
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );
 }
+
