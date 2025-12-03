@@ -28,7 +28,7 @@ export default function QueryDetailModal({ query, onClose }) {
               </div>
               <div className="flex-1">
                 <p className="text-white font-semibold">{query.clientName}</p>
-                <p className="text-[#a0a0b0] text-xs">{query.createdAt.toLocaleDateString()}</p>
+                <p className="text-[#a0a0b0] text-xs">{query.createdAt}</p>
               </div>
             </div>
 
