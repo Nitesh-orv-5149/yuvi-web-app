@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from '../components/NavBar';
+import NavBar from '../../../../components/admin/adminNavBar';
 
 export default function Categories() {
   const router = useRouter();
@@ -51,7 +51,6 @@ export default function Categories() {
           </button>
         </div>
       </div>
-      <NavBar />
     </>
   );
 }

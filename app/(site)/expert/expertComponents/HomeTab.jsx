@@ -33,7 +33,7 @@ export default function HomeTab() {
             </div>
             <span className="font-medium text-gray-300">{selectedQuery.clientName}</span>
             <span className="text-slate-600">•</span>
-            <span>{selectedQuery.createdAt.toLocaleDateString()}</span>
+            <span>{selectedQuery.createdAt}</span>
           </div>
 
           <div className="bg-slate-950 p-4 sm:p-5 rounded-lg border border-slate-800">

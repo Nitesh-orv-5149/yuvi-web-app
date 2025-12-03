@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from '../components/NavBar';
+import NavBar from '../../../../components/admin/adminNavBar';
 
 export default function AddPost() {
   const router = useRouter();
@@ -78,7 +78,6 @@ export default function AddPost() {
           </button>
         </div>
       </div>
-      <NavBar />
     </>
   );
 }
