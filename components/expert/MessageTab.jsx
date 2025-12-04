@@ -1,3 +1,5 @@
+// yuvi-web-app/components/expert/MessageTab.jsx
+"use client";
 import { useState } from 'react';
 import { mockChatClients } from '@/lib/mockData';
 import { ArrowLeft, Send } from 'lucide-react';
@@ -6,7 +8,7 @@ export default function MessageTab() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [messageInput, setMessageInput] = useState('');
   
-  // Separate chat history for each client (replicated from the provided code)
+  // Separate chat history for each client
   const [chatHistories, setChatHistories] = useState({
     '1': [{ sender: 'them', text: 'Hello, I need some help with my project.' }],
     '2': [{ sender: 'them', text: 'Hi, are you available for a quick call?' }],
@@ -26,12 +28,13 @@ export default function MessageTab() {
     }
   };
 
+  // Chat View
   if (selectedClient) {
     const currentHistory = chatHistories[selectedClient.id] || [];
 
     return (
       <div className="flex flex-col h-[calc(100vh-120px)] sm:h-auto animate-in slide-in-from-right duration-300 bg-slate-950">
-        {/* Chat Header - Removed sticky top-0, allowing it to flow below the main app header */}
+        {/* Chat Header */}
         <div className="flex items-center gap-4 p-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md z-10">
           <button 
             onClick={() => setSelectedClient(null)}
@@ -51,7 +54,7 @@ export default function MessageTab() {
           </div>
         </div>
 
-        {/* Chat Messages - Added pb-20 to ensure last message is visible above input area */}
+        {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
           {currentHistory.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
@@ -66,7 +69,7 @@ export default function MessageTab() {
           ))}
         </div>
 
-        {/* Chat Input - Made fixed for mobile chat experience */}
+        {/* Chat Input */}
         <div className="fixed bottom-20 left-0 right-0 max-w-2xl mx-auto p-4 bg-slate-900 border-t border-slate-800">
           <div className="relative">
             <input
@@ -92,9 +95,10 @@ export default function MessageTab() {
     );
   }
 
+  // List View (Client List)
   return (
-    <div className="animate-in fade-in duration-500 pb-24 pt-6">
-      <h2 className="text-2xl font-bold mb-6 px-1">
+    <div className="animate-in fade-in duration-500 pb-24 pt-6 px-4">
+      <h2 className="text-2xl font-bold mb-6">
         <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
           Messages
         </span>

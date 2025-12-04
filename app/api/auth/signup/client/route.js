@@ -88,6 +88,6 @@ export async function POST(req) {
 
   } catch (err) {
     console.error("SIGNUP ERROR:", err);
-    return Response.json({ error: "Server error" }, { status: 500 });
+    return Response.json({ error: `Server error ${err}` }, { status: 500 });
   }
 }

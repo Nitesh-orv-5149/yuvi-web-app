@@ -1,32 +1,19 @@
-import db from "@/lib/db";
+import { db } from "@/lib/db";
 import { queries, answers, experts } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
-import jwt from "jsonwebtoken";
 import { randomUUID } from "crypto";
+import { requireSession } from "@/lib/auth/requireSession";
 
+
+//http:url/api/expert/queries/answered (gets all answered queries for logged in expert)
 export async function GET(req) {
   try {
-    const authHeader = req.headers.get("authorization");
 
-    if (!authHeader) {
-      return new Response("Authorization header missing", { status: 401 });
-    }
+    const session = await requireSession();
+    const expertId = session.user?.id;
 
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      return new Response("Token missing", { status: 401 });
-    }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      return new Response("Invalid token", { status: 401 });
-    }
-
-    const expertId = decoded.expertId;
     if (!expertId) {
-      return new Response("Invalid token payload", { status: 401 });
+      return new Response("Unauthorized", { status: 401 });
     }
 
     const result = await db
@@ -53,34 +40,31 @@ export async function GET(req) {
   }
 }
 
+//http:url/api/expert/queries/answered (to post a new answer to a query)
 export async function POST(request) {
   try {
+    const session = await requireSession();
+    const expertId = session.user?.id;
 
-    const token = request.headers.get("authorization")?.split(" ")[1];
-    if (!token) {
+    if (!expertId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { "Content-Type": "application/json" },
       });
     }
-
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
 
     const expertData = await db
       .select()
       .from(experts)
-      .where(eq(experts.expertId, payload.id))
+      .where(eq(experts.expertId, expertId))
       .limit(1);
 
     if (expertData.length === 0) {
       return new Response(JSON.stringify({ error: "Expert not found" }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
       });
     }
 
     const expert = expertData[0];
-
     const { queryId, answerBody } = await request.json();
 
     if (!queryId || !answerBody) {
@@ -88,10 +72,7 @@ export async function POST(request) {
         JSON.stringify({
           error: "Missing required fields: queryId, answerBody",
         }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400 }
       );
     }
 
@@ -104,21 +85,17 @@ export async function POST(request) {
     if (queryData.length === 0) {
       return new Response(JSON.stringify({ error: "Query not found" }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
       });
     }
 
     const queryItem = queryData[0];
 
-    if (queryItem.categoryId !== expert.categorySlug) {
+    if (queryItem.categoryId !== expert.categoryId) {
       return new Response(
         JSON.stringify({
           error: "Expert cannot answer queries outside their domain",
         }),
-        {
-          status: 403,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 403 }
       );
     }
 
@@ -129,7 +106,7 @@ export async function POST(request) {
       .values({
         answerId,
         queryId,
-        expertId: expert.expertId,
+        expertId,
         answerBody,
       })
       .returning();
@@ -139,34 +116,24 @@ export async function POST(request) {
         message: "Answer added successfully",
         answer: inserted[0],
       }),
-      {
-        status: 201,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 201 }
     );
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
     });
   }
 }
 
+//http:url/api/expert/queries/answered (to delete an answer) {body: {answerId: '...'}}
 export async function DELETE(request) {
   try {
-    const token = request.headers.get("authorization")?.split(" ")[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
 
-    let payload;
-    try {
-      payload = jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
+    const session = await requireSession();
+    const expertId = session.user?.id;
+
+    if (!expertId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
       });
     }
@@ -176,10 +143,7 @@ export async function DELETE(request) {
     if (!answerId) {
       return new Response(
         JSON.stringify({ error: "answerId missing in request body" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400 }
       );
     }
 
@@ -196,7 +160,7 @@ export async function DELETE(request) {
       );
     }
 
-    if (existing[0].expertId !== payload.id) {
+    if (existing[0].expertId !== expertId) {
       return new Response(
         JSON.stringify({ error: "Not allowed to delete this answer" }),
         { status: 403 }
@@ -207,12 +171,11 @@ export async function DELETE(request) {
 
     return new Response(
       JSON.stringify({ success: true, message: "Answer deleted" }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      { status: 200 }
     );
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
     });
   }
 }

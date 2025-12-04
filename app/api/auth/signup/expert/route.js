@@ -51,8 +51,8 @@ export async function POST(req) {
       .from(experts)
       .where(
         or(
-          eq(experts.expertEmail, email),
-          eq(experts.expertUsername, username)
+          eq(experts.email, email),
+          eq(experts.username, username)
         )
       );
 
@@ -92,10 +92,10 @@ export async function POST(req) {
 
     await db.insert(experts).values({
       expertId: uuidv4(),
-      expertUsername: username,
-      expertEmail: email,
-      expertPassword: hashed,
-      expertPhoneNumber: phoneNumber,
+      username: username,
+      email: email,
+      password: hashed,
+      phoneNumber: phoneNumber,
       categoryId,
       bio,
       isApproved: false,
@@ -109,6 +109,6 @@ export async function POST(req) {
 
   } catch (err) {
     console.error("EXPERT SIGNUP ERROR:", err);
-    return Response.json({ error: "Server error" }, { status: 500 });
+    return Response.json({ error: `Server error ${err}` }, { status: 500 });
   }
 }

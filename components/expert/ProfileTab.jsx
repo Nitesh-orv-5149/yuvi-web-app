@@ -1,3 +1,5 @@
+// yuvi-web-app/components/expert/ProfileTab.jsx
+
 import { expertProfile } from '@/lib/mockData';
 import { LogOut, Settings, User } from 'lucide-react';
 

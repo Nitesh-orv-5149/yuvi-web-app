@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import NavBar from '../components/NavBar';
+import NavBar from '../../../../components/admin/adminNavBar';
 
 export default function Posts() {
   const router = useRouter();
@@ -18,7 +18,6 @@ export default function Posts() {
         <h2 className="text-2xl font-bold text-white mb-6">All Posts</h2>
         <p className="text-slate-400">No posts available yet.</p>
       </div>
-      <NavBar />
     </>
   );
 }
