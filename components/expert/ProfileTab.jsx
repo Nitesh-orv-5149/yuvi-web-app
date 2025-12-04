@@ -1,9 +1,31 @@
-// yuvi-web-app/components/expert/ProfileTab.jsx
+"use client"
 
 import { expertProfile } from '@/lib/mockData';
 import { LogOut, Settings, User } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import Loading from '../ui/Loading';
+import { fetchAllQueries } from '@/lib/fetchFunctions/fetchAllQueries';
 
 export default function ProfileTab() {
+
+  const { data: session, status } = useSession();
+  const user = session.user
+
+  const [numberOfQueries, setNumberOfQueries] = useState(0)
+
+  useEffect(() => {
+    async function load() {
+      const res = await fetchAllQueries();
+      setNumberOfQueries(res.length);
+    }
+    load();
+  }, []);
+
+  if (status === "loading") {
+    <Loading/>
+  }
+
   return (
     <div className="animate-in fade-in duration-500 pt-6 pb-24 px-4">
       <h2 className="text-2xl font-bold mb-6">
@@ -21,25 +43,21 @@ export default function ProfileTab() {
             </div>
             <div className='min-w-0'>
               <h3 className="text-xl font-bold text-white truncate">
-                {expertProfile.name}
+                {user.username}
               </h3>
-              <p className="text-[#9ca3af] truncate">{expertProfile.email}</p>
+              <p className="text-[#9ca3af] truncate">{user.email}</p>
             </div>
           </div>
 
           {/* Stat Grid - 1 column on mobile, 3 columns on small screens and up */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3 border-t border-[#1f2937] pt-6">
             <div className="text-center bg-[#0f172a] sm:bg-transparent p-3 sm:p-0 rounded-lg">
-              <div className="text-2xl font-bold text-[#00d4ff]">{expertProfile.stats.queries}</div>
+              <div className="text-2xl font-bold text-[#00d4ff]">{numberOfQueries}</div>
               <p className="text-[#6b7280] text-xs">Queries</p>
             </div>
             <div className="text-center bg-[#0f172a] sm:bg-transparent p-3 sm:p-0 rounded-lg">
               <div className="text-2xl font-bold text-[#38bdf8]">{expertProfile.stats.answers}</div>
               <p className="text-[#6b7280] text-xs">Answers</p>
-            </div>
-            <div className="text-center bg-[#0f172a] sm:bg-transparent p-3 sm:p-0 rounded-lg">
-              <div className="text-2xl font-bold text-[#4f46e5]">{expertProfile.stats.rating}</div>
-              <p className="text-[#6b7280] text-xs">Rating</p>
             </div>
           </div>
         </div>
@@ -61,16 +79,10 @@ export default function ProfileTab() {
           </div>
         </div>
 
-        {/* Actions - Already responsive (full width buttons) */}
         <button className="w-full py-3 px-4 bg-[#020617] text-[#e5e7eb] border border-[#1f2937] rounded-lg hover:bg-[#1f2937] transition font-semibold flex items-center justify-center gap-2">
           <User size={18} /> Edit Profile
         </button>
-
-        <button className="w-full py-3 px-4 bg-[#020617] text-[#9ca3af] rounded-lg hover:bg-[#1f2937] transition font-semibold flex items-center justify-center gap-2">
-          <Settings size={18} /> Account Settings
-        </button>
-        
-        <button className="w-full py-3 px-4 bg-red-900/20 text-red-400 border border-red-900/30 rounded-lg hover:bg-red-900/30 transition font-semibold flex items-center justify-center gap-2 mt-4">
+        <button onClick={() => signOut()} className="w-full py-3 px-4 bg-red-900/20 text-red-400 border border-red-900/30 rounded-lg hover:bg-red-900/30 transition font-semibold flex items-center justify-center gap-2 mt-4">
           <LogOut size={18} /> Sign Out
         </button>
       </div>

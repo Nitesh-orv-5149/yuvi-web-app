@@ -124,35 +124,13 @@ export default function ClientDashboardFull() {
   // HOME TAB
   const renderHome = () => (
     <div className="animate-fadeIn">
-      {/* icon center top */}
-      <div className="w-full flex justify-center pt-4 sm:pt-6">
-        <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-2xl bg-[#020617] border border-[#1f2937] shadow-lg">
-          <Image
-            src="/yuvilogo.png"
-            alt="YuviCollab icon"
-            width={48}
-            height={48}
-            className="object-contain sm:w-16 sm:h-16"
-          />
-        </div>
-      </div>
-
-      <h1 className="text-2xl sm:text-3xl font-bold mb-1 flex justify-center pt-2 sm:pt-4">
-        <span className="bg-gradient-to-r from-[#00d4ff] to-[#4f46e5] bg-clip-text text-transparent">
-          YuviCollab
-        </span>
-      </h1>
-      <p className="text-[#9ca3af] flex justify-center pb-4 text-xs sm:text-sm">
-        Get answers from vetted experts
-      </p>
-
       <div className="mb-4 sm:mb-6">
         <input
           type="text"
           placeholder="Search queries..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-[#020617] border border-[#1f2937] rounded-lg text-white placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#00d4ff] text-sm"
+          className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-[#020617] border border-[#1f2937] rounded-full text-white placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#00d4ff] text-sm"
         />
       </div>
 
