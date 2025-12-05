@@ -1,5 +1,6 @@
 'use client';
 import { useSession, signOut } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function ClientNavbar() {
@@ -13,6 +14,13 @@ export default function ClientNavbar() {
             <span className="text-lg">💡</span>
           </div>
           <span className="font-bold text-lg gradient-text">Client</span>
+          <Image
+            src="/yuvilogo.png"
+            alt="YuviCollab icon"
+            width={48}
+            height={48}
+            className="object-contain sm:w-16 sm:h-16"
+          />
         </Link>
     
         <div className="flex items-center gap-4">
@@ -22,7 +30,7 @@ export default function ClientNavbar() {
                 {session.user?.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <button
-                onClick={() => signOut({ callbackUrl: '/signin' })}
+                onClick={() => signOut({ callbackUrl: '/auth' })}
                 className="text-xs bg-[#ff006e]/20 text-[#ff006e] px-2 py-1 rounded hover:bg-[#ff006e]/30 transition"
               >
                 Logout

@@ -10,6 +10,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     let { username, email, password, phoneNumber } = body;
+    console.log("body: ", body)
 
     if (!username || !email || !password || !phoneNumber) {
       return Response.json(

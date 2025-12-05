@@ -1,18 +1,14 @@
 import { db } from "@/lib/db";
-import { queries, answers } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { categories } from "@/lib/schema";
 
+// GET ALL CATEGORIES
 export async function GET() {
   try {
-    const rows = await db
-      .select()
-      .from(queries)
-      .leftJoin(answers, eq(queries.queryId, answers.queryId));
-
+    const rows = await db.select().from(categories);
     return Response.json(rows, { status: 200 });
   } catch (err) {
     return Response.json(
-      { error: "Failed to fetch queries", details: err.message },
+      { error: "Failed to fetch categories", details: err.message },
       { status: 500 }
     );
   }
