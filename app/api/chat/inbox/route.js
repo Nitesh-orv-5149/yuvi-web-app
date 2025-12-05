@@ -9,8 +9,20 @@ export async function GET() {
     const user = session.user;
 
     const convos = await db
-      .select()
+      .select({
+        conversationId: conversations.conversationId,
+        clientId: conversations.clientId,
+        expertId: conversations.expertId,
+        lastMessageId: conversations.lastMessageId,
+        createdAt: conversations.createdAt,
+        updatedAt: conversations.updatedAt,
+
+        clientName: clients.username,
+        expertName: experts.username
+      })
       .from(conversations)
+      .leftJoin(clients, eq(conversations.clientId, clients.clientId))
+      .leftJoin(experts, eq(conversations.expertId, experts.expertId))
       .where(
         or(
           eq(conversations.clientId, user.id),
@@ -19,6 +31,7 @@ export async function GET() {
       )
       .orderBy(desc(conversations.updatedAt));
 
+    console.log(convos);
     return Response.json(convos);
 
   } catch (err) {

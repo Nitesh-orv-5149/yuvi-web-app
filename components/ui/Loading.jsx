@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Loading() {
   return (
-    <div className='mt-20 w-full flex justify-center items-center'>
+    <div className='py-20 w-full flex justify-center items-center'>
         <div className="w-20 h-20 relative flex items-center justify-center">
         <div
             className="absolute inset-0 rounded-xl bg-[#2D2A9E]/20 blur-xl animate-pulse"

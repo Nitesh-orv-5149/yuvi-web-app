@@ -5,8 +5,9 @@ import { LogOut, Settings, User } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Loading from '../ui/Loading';
-import { fetchAllQueries } from '@/lib/fetchFunctions/fetchAllQueries';
+import { fetchAllQueries } from '@/lib/apiFunctions/fetchAllQueries';
 import axios from 'axios';
+import Link from 'next/link';
 
 export default function ProfileTab() {
 
@@ -81,11 +82,14 @@ export default function ProfileTab() {
           <h3 className="text-lg font-bold text-white mb-4">Recently Answered</h3>
           <div className="space-y-3">
             {answeredQueries.map((query) => (
-              <div key={query.queryId} className="bg-[#0f172a] border border-[#1f2937] rounded p-3">
-                <p className="text-white text-sm font-semibold line-clamp-2">
-                  {query.questionTitle}
-                </p>
-              </div>
+              <Link key={query.queryId}  href={`home/${query.queryId}`}>
+                <div className="bg-[#0f172a] border border-[#1f2937] rounded p-3">
+                  <p className="flex flex-col justify-center items-start text-white text-sm font-bold line-clamp-2">
+                    {query.questionTitle}
+                    <span className='font-light text-gray-400'>{query.questionBody}</span>
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

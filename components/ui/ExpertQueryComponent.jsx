@@ -10,14 +10,6 @@ export default function ExpertQueryComponent({ query }) {
                  group relative overflow-hidden shadow-md"
     >
       <div className="flex gap-4">
-        
-        {/* Avatar placeholder since your data has no avatar */}
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br 
-                        from-cyan-500 to-blue-600 flex items-center justify-center 
-                        flex-shrink-0 text-white font-bold shadow-lg shadow-cyan-500/10 text-lg">
-          {query.clientId?.slice(0, 2).toUpperCase() || "U"}
-        </div>
-
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start gap-2 mb-1">
             <h3 className="text-white font-semibold group-hover:text-cyan-400 
@@ -31,11 +23,6 @@ export default function ExpertQueryComponent({ query }) {
           </p>
 
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-            <span className="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md 
-                             font-medium border border-slate-700">
-              {query.categoryId.slice(0, 8)}…
-            </span>
-
             <span>•</span>
 
             <span>
@@ -43,15 +30,6 @@ export default function ExpertQueryComponent({ query }) {
             </span>
           </div>
         </div>
-      </div>
-
-      {/* Status missing in your data → assume all are pending */}
-      <div className="absolute top-4 right-4 sm:top-5 sm:right-5">
-        <span className="flex items-center gap-1 text-amber-400 bg-amber-400/10 
-                         px-2.5 py-1 rounded-full text-[10px] font-bold uppercase 
-                         tracking-wide border border-amber-400/20">
-          <Clock size={12} /> Pending
-        </span>
       </div>
     </div>
     </Link>

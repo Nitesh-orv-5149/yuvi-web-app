@@ -11,6 +11,8 @@ export async function GET(req) {
     const conversationId = searchParams.get("conversationId");
     const cursor = Number(searchParams.get("cursor") || 0);
 
+    console.log(`convoId: ${conversationId} and cursor ${cursor}`)
+
     const result = await db
       .select()
       .from(messages)
@@ -23,6 +25,7 @@ export async function GET(req) {
       .limit(20)
       .offset(cursor);
 
+    console.log("messages: ", result)
     return Response.json(result);
 
   } catch (err) {

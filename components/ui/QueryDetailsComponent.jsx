@@ -73,7 +73,7 @@ export default function QueryDetailsComponent({ data }) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen justify-start items-center mt-20 px-4">
+    <div className="flex flex-col min-h-screen justify-center items-center px-4">
       
       <a
         href="/expert/home"
