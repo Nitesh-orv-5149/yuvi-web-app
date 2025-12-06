@@ -3,11 +3,25 @@ import { useState,useEffect } from 'react';
 import ExpertList from '@/components/client/expert/ExpertList';
 import ExpertDetailPage from '@/components/client/modals/ExpertDetailPage';
 import ExpertChatModal from '@/components/client/modals/ExpertChatModal';
-import { mockExperts } from '@/lib/mockData';
+import axios from 'axios';
 
 export default function ExpertPage() {
   const [selectedExpert, setSelectedExpert] = useState(null);
   const [chatExpert, setChatExpert] = useState(null);
+  const [experts, setExperts] = useState([]);
+
+  useEffect(() => {
+    const fetchExperts = async () => {
+      try {
+        const response = await axios.get('/api/client/queries/experts');
+        console.log('Fetched experts:', response.data);
+        setExperts(response.data);
+      } catch (error) {
+        console.error('Error fetching experts:', error);
+      }
+    }
+    fetchExperts();
+  }, []);
 
   return (
     <div className="animate-fadeIn">
@@ -23,7 +37,7 @@ export default function ExpertPage() {
       </div>
 
       <ExpertList
-        experts={mockExperts}
+        experts={experts}
         onViewClick={setSelectedExpert}
         onMessageClick={setChatExpert}
       />

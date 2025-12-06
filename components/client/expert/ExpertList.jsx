@@ -34,9 +34,9 @@ export default function ExpertList({ experts, onViewClick, onMessageClick, isLoa
           {experts.length}
         </span>
       </h2>
-      {experts.map((expert) => (
+      {experts.map((expert,idx) => (
         <ExpertCard
-          key={expert.id}
+          key={idx}
           expert={expert}
           onViewClick={onViewClick}
           onMessageClick={onMessageClick}
