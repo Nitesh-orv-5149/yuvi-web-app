@@ -1,34 +1,42 @@
 "use client";
 
 export default function ExpertCard({ expert, onEdit, onDelete }) {
-  const card = {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: 12,
-    alignItems: "flex-start",
-    padding: 12,
-    borderRadius: 12,
-    background: "linear-gradient(180deg, rgba(18,20,24,0.95), rgba(16,18,22,0.95))",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.45)",
-    border: "1px solid rgba(255,255,255,0.03)",
-  };
-  const name = { color: "#eaf4ff", fontSize: 14, fontWeight: 700 };
-  const tags = { color: "rgba(159,214,255,0.9)", fontSize: 12, marginTop: 6 };
-  const bio = { color: "rgba(255,255,255,0.45)", fontSize: 12, marginTop: 8 };
-  const actions = { display: "flex", flexDirection: "column", gap: 8 };
-  const btn = { padding: "6px 10px", borderRadius: 8, border: "none" };
-
   return (
-    <div style={card}>
+    <div
+      className="p-4 rounded-xl bg-[linear-gradient(180deg,#16181e,#101217)] 
+                 shadow-lg shadow-black/40 border border-white/5 flex justify-between gap-4"
+    >
       <div>
-        <h4 style={name}>{expert.name}</h4>
-        {expert.tags && <p style={tags}>{expert.tags.join(" • ")}</p>}
-        {expert.bio && <p style={bio}>{expert.bio}</p>}
+        <h3 className="text-blue-100 text-sm font-semibold">{expert.name}</h3>
+
+        {expert.tags?.length > 0 && (
+          <p className="text-[12px] text-blue-300/80 mt-1">
+            {expert.tags.join(" • ")}
+          </p>
+        )}
+
+        {expert.bio && (
+          <p className="text-xs text-white/40 mt-2 leading-relaxed">
+            {expert.bio}
+          </p>
+        )}
       </div>
 
-      <div style={actions}>
-        <button onClick={() => onEdit(expert)} style={{ ...btn, background: "rgba(60,100,200,0.08)", color: "#9fd6ff" }}>Edit</button>
-        <button onClick={() => onDelete(expert)} style={{ ...btn, background: "rgba(200,60,60,0.06)", color: "#ff9fa6" }}>Delete</button>
+      <div className="flex flex-col gap-2">
+        <button
+          onClick={() => onEdit(expert)}
+          className="px-3 py-1 rounded-md text-[12px] 
+                     bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 transition"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => onDelete(expert)}
+          className="px-3 py-1 rounded-md text-[12px] 
+                     bg-red-600/20 text-red-300 hover:bg-red-600/30 transition"
+        >
+          Delete
+        </button>
       </div>
     </div>
   );

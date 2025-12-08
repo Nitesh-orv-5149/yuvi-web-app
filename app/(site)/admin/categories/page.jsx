@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import BottomNav from "../../../../components/admin/BottomNav";
-import BottomSheet from "../../../../components/admin/BottomSheet";
-import CategoryCard from "../../../../components/admin/CategoryCard";
+import { useState, useEffect } from "react";
+import BottomNav from "@/components/admin/BottomNav";
+import BottomSheet from "@/components/admin/BottomSheet";
+import CategoryCard from "@/components/admin/CategoryCard";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -17,44 +17,76 @@ export default function CategoriesPage() {
     ]);
   }, []);
 
-  function openAdd() {
+  const openAdd = () => {
     setEditing(null);
     setOpen(true);
-  }
-  function openEdit(cat) {
+  };
+
+  const openEdit = (cat) => {
     setEditing(cat);
     setOpen(true);
-  }
-  function remove(cat) {
+  };
+
+  const remove = (cat) => {
     if (!confirm(`Delete category "${cat.name}"?`)) return;
     setCategories((prev) => prev.filter((c) => c.id !== cat.id));
-  }
-  function save(data) {
+  };
+
+  const save = (data) => {
     if (editing) {
-      setCategories((prev) => prev.map((c) => (c.id === editing.id ? { ...c, ...data } : c)));
+      setCategories((prev) =>
+        prev.map((c) => (c.id === editing.id ? { ...c, ...data } : c))
+      );
     } else {
-      setCategories((prev) => [{ id: Date.now().toString(), ...data }, ...prev]);
+      setCategories((prev) => [
+        { id: Date.now().toString(), ...data },
+        ...prev,
+      ]);
     }
     setOpen(false);
-  }
+  };
 
   return (
-    <div style={{ minHeight: "100vh", paddingBottom: 84, background: "linear-gradient(180deg,#0b0d11,#1a1223)" }}>
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: 20 }}>
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-          <h1 style={{ color: "#eaf4ff", fontSize: 20 }}>Categories</h1>
-          <button onClick={openAdd} style={{ background: "#6b8cff", color: "#fff", padding: "8px 12px", borderRadius: 10, border: "none" }}>+ Add</button>
-        </header>
+    <div className="min-h-screen pb-24 bg-gradient-to-b from-[#0b0d11] to-[#1a1223] animate-fadeIn">
+      <div className="max-w-2xl mx-auto p-4 space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-white">Categories</h1>
 
-        <div style={{ display: "grid", gap: 12 }}>
-          {categories.map((c) => <CategoryCard key={c.id} category={c} onEdit={openEdit} onDelete={remove} />)}
+          <button
+            onClick={openAdd}
+            className="px-4 py-2 rounded-lg text-white font-semibold bg-gradient-to-r from-blue-600 to-purple-600 shadow-md shadow-blue-500/20 hover:scale-[1.02] transition"
+          >
+            + Add
+          </button>
+        </div>
+
+        {/* Category List */}
+        <div className="space-y-3">
+          {categories.map((c) => (
+            <CategoryCard
+              key={c.id}
+              category={c}
+              onEdit={openEdit}
+              onDelete={remove}
+            />
+          ))}
         </div>
       </div>
 
       <BottomNav />
 
-      <BottomSheet open={open} onClose={() => setOpen(false)} height={"45vh"}>
-        <CategoryForm initial={editing} onCancel={() => setOpen(false)} onSave={save} />
+      {/* Bottom Sheet */}
+      <BottomSheet
+        open={open}
+        onClose={() => setOpen(false)}
+        height="45vh"
+      >
+        <CategoryForm
+          initial={editing}
+          onCancel={() => setOpen(false)}
+          onSave={save}
+        />
       </BottomSheet>
     </div>
   );
@@ -64,34 +96,61 @@ function CategoryForm({ initial, onCancel, onSave }) {
   const [name, setName] = useState(initial?.name || "");
   const [desc, setDesc] = useState(initial?.desc || "");
 
-  useEffect(() => {
-    setName(initial?.name || "");
-    setDesc(initial?.desc || "");
-  }, [initial]);
-
-  const label = { color: "#cfe8ff", fontSize: 12 };
-  const input = { padding: 10, borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", background: "#0f1116", color: "#eaf4ff" };
-
   return (
-    <div style={{ display: "grid", gap: 10 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3 style={{ color: "#eaf4ff" }}>{initial ? "Edit Category" : "Add Category"}</h3>
-        <button onClick={onCancel} style={{ color: "#9fbff0", background: "transparent", border: "none" }}>Close</button>
+    <div className="text-white space-y-4">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-lg font-semibold">
+          {initial ? "Edit Category" : "Add Category"}
+        </h3>
+
+        <button
+          onClick={onCancel}
+          className="text-blue-300 hover:text-blue-400 transition"
+        >
+          Close
+        </button>
       </div>
 
-      <div>
-        <label style={label}>Name</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} style={input} />
+      {/* Input Fields */}
+      <div className="space-y-4">
+
+        <div className="space-y-1">
+          <label className="text-sm text-blue-200">Name</label>
+          <input
+            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm text-blue-200">Description</label>
+          <input
+            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+          />
+        </div>
+
       </div>
 
-      <div>
-        <label style={label}>Description</label>
-        <input value={desc} onChange={(e) => setDesc(e.target.value)} style={input} />
-      </div>
+      {/* Buttons */}
+      <div className="flex justify-end gap-3 pt-2">
+        <button
+          onClick={onCancel}
+          className="px-4 py-2 rounded-lg bg-white/5 text-blue-200 hover:bg-white/10 transition"
+        >
+          Cancel
+        </button>
 
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 6 }}>
-        <button onClick={onCancel} style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", color: "#cfe8ff", border: "none" }}>Cancel</button>
-        <button onClick={() => onSave({ name, desc })} style={{ padding: "8px 12px", borderRadius: 8, background: "#6b8cff", color: "#fff", border: "none" }}>Save</button>
+        <button
+          onClick={() => onSave({ name, desc })}
+          className="px-4 py-2 rounded-lg text-white font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-[1.02] transition"
+        >
+          Save
+        </button>
       </div>
     </div>
   );
