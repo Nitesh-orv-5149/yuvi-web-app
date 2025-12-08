@@ -1,22 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import BottomNav from "./components/BottomNav";
-import BottomSheet from "./components/BottomSheet";
-import PostCard from "./components/PostCard";
+import BottomNav from "../../../components/admin/BottomNav";
+import BottomSheet from "../../../components/admin/BottomSheet";
+import PostCard from "../../../components/admin/PostCard";
+import PostForm from "../../../components/admin/PostForm";
 
 export default function AdminPostsPage() {
   const [posts, setPosts] = useState([]);
   const [openSheet, setOpenSheet] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [categories, setCategories] = useState([]);
 
-  // Mock load
   useEffect(() => {
-    // replace this with real fetch
+    // mock data — swap with API
     setPosts([
       { id: "1", title: "Payment not reflecting", category: "Payments", query: "I paid but didn't get confirmation", updatedAt: Date.now(), answersCount: 1 },
       { id: "2", title: "How to reset password?", category: "Account", query: "I forgot my password", updatedAt: Date.now(), answersCount: 0 },
     ]);
+    setCategories([{ id: "c1", name: "Payments" }, { id: "c2", name: "Account" }]);
   }, []);
 
   function openNew() {
@@ -30,87 +32,34 @@ export default function AdminPostsPage() {
   }
 
   function savePost(data) {
-    // TODO: replace with API POST/PUT
     if (editing) {
-      setPosts((prev) => prev.map(p => p.id === editing.id ? { ...p, ...data } : p));
+      setPosts((prev) => prev.map((p) => (p.id === editing.id ? { ...p, ...data } : p)));
     } else {
-      setPosts((prev) => [{ id: Date.now().toString(), ...data }, ...prev]);
+      setPosts((prev) => [{ id: Date.now().toString(), updatedAt: Date.now(), answersCount: 0, ...data }, ...prev]);
     }
     setOpenSheet(false);
   }
 
   return (
-    <div className="min-h-screen pb-24 bg-gray-50">
-      <div className="max-w-3xl mx-auto p-4 space-y-4">
-        <header className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">All Posts</h1>
-          <button
-            onClick={openNew}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
-          >
-            + Add Post
-          </button>
+    <div style={{ minHeight: "100vh", paddingBottom: 84, background: "linear-gradient(180deg,#0b0d11,#1a1223)" }}>
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: 20 }}>
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+          <h1 style={{ color: "#eaf4ff", fontSize: 20 }}>All Posts</h1>
+          <button onClick={openNew} style={{ background: "#6b8cff", color: "#fff", padding: "8px 12px", borderRadius: 10, border: "none" }}>+ Add Post</button>
         </header>
 
-        <div className="grid gap-4">
-          {posts.map((p) => (
-            <PostCard key={p.id} post={p} onOpen={openEdit} />
-          ))}
+        <div style={{ display: "grid", gap: 12 }}>
+          {posts.map((p) => <PostCard key={p.id} post={p} onOpen={openEdit} />)}
         </div>
       </div>
 
       <BottomNav />
 
-      <BottomSheet
-        open={openSheet}
-        onClose={() => setOpenSheet(false)}
-        height={editing ? "85vh" : "75vh"}
-      >
-        <PostForm initial={editing} onCancel={() => setOpenSheet(false)} onSave={savePost} />
+      <BottomSheet open={openSheet} onClose={() => setOpenSheet(false)} height={editing ? "85vh" : "75vh"}>
+        <div style={{ paddingBottom: 6 }}>
+          <PostForm initial={editing} onCancel={() => setOpenSheet(false)} onSave={savePost} categories={categories} />
+        </div>
       </BottomSheet>
-    </div>
-  );
-}
-
-/* Inline PostForm to keep files minimal — move to separate file if preferred */
-function PostForm({ initial, onCancel, onSave }) {
-  const [title, setTitle] = useState(initial?.title || "");
-  const [category, setCategory] = useState(initial?.category || "");
-  const [query, setQuery] = useState(initial?.query || "");
-  const [answer, setAnswer] = useState(initial?.answer || "");
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{initial ? "Edit Post" : "Add Post"}</h3>
-        <button onClick={onCancel} className="text-sm text-gray-500">Close</button>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-medium">Title</label>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border rounded-md px-3 py-2" placeholder="Post title" />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-medium">Category</label>
-        {/* Replace with real categories dropdown */}
-        <input value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border rounded-md px-3 py-2" placeholder="Category" />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-medium">Query</label>
-        <textarea value={query} onChange={(e) => setQuery(e.target.value)} className="w-full border rounded-md px-3 py-2 h-28" />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-medium">Answer</label>
-        <textarea value={answer} onChange={(e) => setAnswer(e.target.value)} className="w-full border rounded-md px-3 py-2 h-28" />
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <button onClick={onCancel} className="px-4 py-2 rounded-md bg-gray-100">Cancel</button>
-        <button onClick={() => onSave({ title, category, query, answer })} className="px-4 py-2 rounded-md bg-blue-600 text-white">Save</button>
-      </div>
     </div>
   );
 }

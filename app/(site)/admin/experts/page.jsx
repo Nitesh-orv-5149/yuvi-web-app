@@ -3,17 +3,17 @@
 import { useEffect, useState } from "react";
 import BottomNav from "../../../../components/admin/BottomNav";
 import BottomSheet from "../../../../components/admin/BottomSheet";
-import CategoryCard from "../../../../components/admin/CategoryCard";
+import ExpertCard from "../../../../components/admin/ExpertCard";
 
-export default function CategoriesPage() {
-  const [categories, setCategories] = useState([]);
+export default function ExpertsPage() {
+  const [experts, setExperts] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
   useEffect(() => {
-    setCategories([
-      { id: "c1", name: "Payments", desc: "Payment & billing related" },
-      { id: "c2", name: "Account", desc: "Account and settings" },
+    setExperts([
+      { id: "e1", name: "Alice Kumar", tags: ["Payments", "KYC"], bio: "Payments specialist" },
+      { id: "e2", name: "Rahul Singh", tags: ["Account"], bio: "Account support" },
     ]);
   }, []);
 
@@ -21,19 +21,19 @@ export default function CategoriesPage() {
     setEditing(null);
     setOpen(true);
   }
-  function openEdit(cat) {
-    setEditing(cat);
+  function openEdit(ex) {
+    setEditing(ex);
     setOpen(true);
   }
-  function remove(cat) {
-    if (!confirm(`Delete category "${cat.name}"?`)) return;
-    setCategories((prev) => prev.filter((c) => c.id !== cat.id));
+  function remove(ex) {
+    if (!confirm(`Delete expert "${ex.name}"?`)) return;
+    setExperts((prev) => prev.filter((e) => e.id !== ex.id));
   }
   function save(data) {
     if (editing) {
-      setCategories((prev) => prev.map((c) => (c.id === editing.id ? { ...c, ...data } : c)));
+      setExperts((prev) => prev.map((e) => (e.id === editing.id ? { ...e, ...data } : e)));
     } else {
-      setCategories((prev) => [{ id: Date.now().toString(), ...data }, ...prev]);
+      setExperts((prev) => [{ id: Date.now().toString(), ...data }, ...prev]);
     }
     setOpen(false);
   }
@@ -42,31 +42,33 @@ export default function CategoriesPage() {
     <div style={{ minHeight: "100vh", paddingBottom: 84, background: "linear-gradient(180deg,#0b0d11,#1a1223)" }}>
       <div style={{ maxWidth: 960, margin: "0 auto", padding: 20 }}>
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-          <h1 style={{ color: "#eaf4ff", fontSize: 20 }}>Categories</h1>
+          <h1 style={{ color: "#eaf4ff", fontSize: 20 }}>Experts</h1>
           <button onClick={openAdd} style={{ background: "#6b8cff", color: "#fff", padding: "8px 12px", borderRadius: 10, border: "none" }}>+ Add</button>
         </header>
 
         <div style={{ display: "grid", gap: 12 }}>
-          {categories.map((c) => <CategoryCard key={c.id} category={c} onEdit={openEdit} onDelete={remove} />)}
+          {experts.map((e) => <ExpertCard key={e.id} expert={e} onEdit={openEdit} onDelete={remove} />)}
         </div>
       </div>
 
       <BottomNav />
 
-      <BottomSheet open={open} onClose={() => setOpen(false)} height={"45vh"}>
-        <CategoryForm initial={editing} onCancel={() => setOpen(false)} onSave={save} />
+      <BottomSheet open={open} onClose={() => setOpen(false)} height={"50vh"}>
+        <ExpertForm initial={editing} onCancel={() => setOpen(false)} onSave={save} />
       </BottomSheet>
     </div>
   );
 }
 
-function CategoryForm({ initial, onCancel, onSave }) {
+function ExpertForm({ initial, onCancel, onSave }) {
   const [name, setName] = useState(initial?.name || "");
-  const [desc, setDesc] = useState(initial?.desc || "");
+  const [tags, setTags] = useState((initial?.tags || []).join(", "));
+  const [bio, setBio] = useState(initial?.bio || "");
 
   useEffect(() => {
     setName(initial?.name || "");
-    setDesc(initial?.desc || "");
+    setTags((initial?.tags || []).join(", ") || "");
+    setBio(initial?.bio || "");
   }, [initial]);
 
   const label = { color: "#cfe8ff", fontSize: 12 };
@@ -75,7 +77,7 @@ function CategoryForm({ initial, onCancel, onSave }) {
   return (
     <div style={{ display: "grid", gap: 10 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3 style={{ color: "#eaf4ff" }}>{initial ? "Edit Category" : "Add Category"}</h3>
+        <h3 style={{ color: "#eaf4ff" }}>{initial ? "Edit Expert" : "Add Expert"}</h3>
         <button onClick={onCancel} style={{ color: "#9fbff0", background: "transparent", border: "none" }}>Close</button>
       </div>
 
@@ -85,13 +87,18 @@ function CategoryForm({ initial, onCancel, onSave }) {
       </div>
 
       <div>
-        <label style={label}>Description</label>
-        <input value={desc} onChange={(e) => setDesc(e.target.value)} style={input} />
+        <label style={label}>Tags (comma separated)</label>
+        <input value={tags} onChange={(e) => setTags(e.target.value)} style={input} />
       </div>
 
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 6 }}>
+      <div>
+        <label style={label}>Bio (optional)</label>
+        <textarea value={bio} onChange={(e) => setBio(e.target.value)} style={{ ...input, minHeight: 120 }} />
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
         <button onClick={onCancel} style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", color: "#cfe8ff", border: "none" }}>Cancel</button>
-        <button onClick={() => onSave({ name, desc })} style={{ padding: "8px 12px", borderRadius: 8, background: "#6b8cff", color: "#fff", border: "none" }}>Save</button>
+        <button onClick={() => onSave({ name, tags: tags.split(",").map((t) => t.trim()).filter(Boolean), bio })} style={{ padding: "8px 12px", borderRadius: 8, background: "#6b8cff", color: "#fff", border: "none" }}>Save</button>
       </div>
     </div>
   );
