@@ -1,53 +1,28 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function BottomSheet({ open, onClose, children, height = "70vh" }) {
-  const backdropStyle = {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.55)",
-    backdropFilter: "blur(6px)",
-    zIndex: 70,
-    display: "flex",
-    alignItems: "flex-end",
-    justifyContent: "center",
-  };
-
-  const sheetStyle = {
-    width: "100%",
-    maxWidth: 980,
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    padding: "14px 14px 30px",
-    boxShadow: "0 -10px 40px rgba(0,0,0,0.6)",
-    overflow: "auto",
-    background: "linear-gradient(180deg, rgba(12,14,18,0.98), rgba(22,24,30,0.98))",
-    color: "#e6eef8",
-  };
-
-  const handleStyle = {
-    width: 48,
-    height: 4,
-    background: "rgba(255,255,255,0.08)",
-    margin: "6px auto",
-    borderRadius: 4,
-  };
-
   return (
     <AnimatePresence>
       {open && (
-        <div style={backdropStyle} onClick={onClose}>
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        >
           <motion.div
             onClick={(e) => e.stopPropagation()}
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            style={{ ...sheetStyle, maxHeight: height }}
+            style={{ maxHeight: height }}
+            className="w-full md:w-[900px] bg-gradient-to-b from-[#0f1116] to-[#15151a] rounded-t-2xl p-4 shadow-2xl overflow-auto"
           >
-            <div style={handleStyle} />
-            <div>{children}</div>
+            {/* handle */}
+            <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-3" />
+            {/* content */}
+            <div className="text-slate-100">{children}</div>
           </motion.div>
         </div>
       )}
