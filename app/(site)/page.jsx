@@ -1,52 +1,69 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import SearchBar from '@/components/client/home/SearchBar';
-import QueriesList from '@/components/client/home/QueriesList';
-import QueryDetailModal from '@/components/client/modals/QueryDetailModal';
-import { fetchAllQueries } from '@/lib/apiFunctions/fetchAllQueries';
+"use client";
 
-export default function HomePage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedQuery, setSelectedQuery] = useState(null);
-  const [queries, setQueries] = useState([]);
-  const router = useRouter();
+import { useState } from "react";
+import { signIn, signOut } from "next-auth/react";
+import { redirect } from "next/dist/server/api-utils";
 
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchAllQueries();
-      setQueries(data || []); 
-    };
+export default function SignInPage() {
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-    loadData();
-  }, []);
-  const filteredQueries = queries.filter((q) =>
-    q.questionTitle?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    setErrorMsg("");
+
+    const res = await signIn("credentials", {
+      identifier: emailOrUsername,  // could be email or username
+      password,
+      role: "admin",
+      redirect: false,
+    });
+
+    console.log("SIGNIN RESPONSE:", res);
+
+    if (res?.error) {
+      setErrorMsg(res.error);
+      return;
+    }
+
+    // If login success, redirect manually
+    window.location.href = "/success";
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f0f23] via-[#1a1029] to-[#050114] pb-24">
-        <div className="px-3 sm:px-4 py-4 sm:py-6 max-w-3xl mx-auto">
-          <div className="animate-fadeIn">
-            <SearchBar onSearch={setSearchTerm} />
+    <div style={{ padding: 40, maxWidth: 300 }}>
+      <h2>Sign In</h2>
 
-            <div className="mb-6">
-              <button
-                onClick={() => router.push('/client/create-query')}
-                className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-cyan-800 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 text-sm sm:text-base flex items-center justify-center gap-2 group"
-              >
-                <span className="text-lg group-hover:scale-110 transition duration-300">✏️</span>
-                <span>Ask a Question</span>
-              </button>
-            </div>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: 12 }}
+      >
+        <input
+          type="text"
+          placeholder="Email or Username"
+          value={emailOrUsername}
+          onChange={(e) => setEmailOrUsername(e.target.value)}
+          required
+        />
 
-            <QueriesList queries={filteredQueries} onQuerySelect={setSelectedQuery} />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-            {selectedQuery && (
-              <QueryDetailModal query={selectedQuery} onClose={() => setSelectedQuery(null)} />
-            )}
-          </div>
-        </div>
+        <button type="submit">Sign In</button>
+      </form>
+
+      {errorMsg && (
+        <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>
+      )}
+
+      <button onClick={() => signOut({redirect: true, callbackUrl: `${process.env.NEXT_PUBLIC_URL}/signedout`,})}>signout</button>
     </div>
   );
 }

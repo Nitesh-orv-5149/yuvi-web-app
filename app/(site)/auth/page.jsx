@@ -111,7 +111,7 @@ export default function AuthPage() {
           password: password, 
           role: role,
           redirect: true,
-          callbackUrl: role === "client" ? "/client/home" : "/expert/home" 
+          callbackUrl: role === "client" ? "/client" : "/expert/home" 
         });
         
         if (result.error) {

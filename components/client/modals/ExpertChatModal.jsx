@@ -31,7 +31,7 @@ export default function ExpertChatModal({ expert, onClose }) {
 
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#5f00d2] flex items-center justify-center text-white text-xl font-bold shadow-lg">
-              {expert.username}
+              {expert.username.charAt(0).toUpperCase()}
             </div>
 
             <div>

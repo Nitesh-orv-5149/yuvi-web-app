@@ -34,7 +34,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-, "app/(site)/client/dashboard/page.jsx", "app/(site)/signup/page.jsx", "app/components/StatsCard.jsx", "app/components/SearchBar.jsx", "app/components/QueryCard.jsx", "app/components/PostQueryForm.jsx", "app/components/Navbar.jsx", "app/components/MessageCard.jsx", "app/components/ExpertCard.jsx", "app/components/BottomNav.jsx", "app/(site)/client/messages/[conversationId]/page.jsx"  ],
+, "app/(site)/client/dashboard/page.jsx", "app/(site)/signup/page.jsx", "app/components/StatsCard.jsx", "app/components/SearchBar.jsx", "app/components/QueryCard.jsx", "app/components/PostQueryForm.jsx", "app/components/Navbar.jsx", "app/components/MessageCard.jsx", "app/components/ExpertCard.jsx", "app/components/BottomNav.jsx"  ],
   "exclude": [
     "node_modules"
   ]

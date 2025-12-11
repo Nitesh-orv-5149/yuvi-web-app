@@ -12,7 +12,7 @@ export default function ChatPage() {
   const router = useRouter();
 
   const { data: session } = useSession();
-  const currentUserId = session?.user?.id; 
+  const currentUserId = session?.user?.id; // YOU MUST HAVE THIS
 
   const [messagesList, setMessagesList] = useState([]);
   const [messageInput, setMessageInput] = useState("");

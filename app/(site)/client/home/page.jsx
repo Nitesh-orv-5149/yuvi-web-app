@@ -31,7 +31,7 @@ export default function HomePage() {
       <div className="mb-6">
         <button
           onClick={() => router.push('/client/create-query')}
-          className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-cyan-800 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 text-sm sm:text-base flex items-center justify-center gap-2 group"
+          className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-[#00d4ff] to-[#ff006e] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 text-sm sm:text-base flex items-center justify-center gap-2 group"
         >
           <span className="text-lg group-hover:scale-110 transition duration-300">✏️</span>
           <span>Ask a Question</span>
