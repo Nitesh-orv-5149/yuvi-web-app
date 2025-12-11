@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { getInbox } from "@/lib/apiFunctions/chatFunctions";
 import Link from "next/link";
 import Loading from "../ui/Loading";
+import { useSession } from "next-auth/react";
 
 export default function InboxPage() {
+
+  const { data: session } = useSession()
+  const user = session.user
+
   const [inbox, setInbox] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +20,7 @@ export default function InboxPage() {
       try {
         const data = await getInbox();
         setInbox(data);
+        console.log("Inbox: ", data)
       } catch (err) {
         console.error("INBOX LOAD FAILED:", err);
       } finally {
@@ -33,7 +39,7 @@ export default function InboxPage() {
 
       <div className="space-y-3">
         {inbox.map((convo) => {
-          const name = convo.clientName || convo.expertName;
+          const name = user.role === "expert" ? convo.clientName : convo.expertName;
 
           return (
             <Link href={`messages/${convo.conversationId}`} key={convo.conversationId}>

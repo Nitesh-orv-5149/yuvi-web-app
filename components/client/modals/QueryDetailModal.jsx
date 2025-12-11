@@ -36,7 +36,7 @@ export default function QueryDetailModal({ query, onClose }) {
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-4 animate-fadeIn">
       <div className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-t-3xl md:rounded-3xl w-full md:max-w-2xl max-h-[90vh] overflow-y-auto animate-slideUp shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-linear-to-r from-[#00d4ff] to-[#ff006e] border-b border-[#2a2a3e] px-4 sm:px-6 py-4 flex justify-between items-center">
+        <div className="sticky top-0 bg-cyan-800 border-b border-[#2a2a3e] px-4 sm:px-6 py-4 flex justify-between items-center">
           <h2 className="font-bold text-white text-base sm:text-lg">
             Question Details
           </h2>

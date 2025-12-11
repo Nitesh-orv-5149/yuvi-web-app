@@ -27,7 +27,7 @@ export default function ClientLayout({ children }) {
   const getActiveTab = () => {
     if (pathname.includes('/client/home')) return 'home';
     if (pathname.includes('/client/create-query')) return 'post';
-    if (pathname.includes('/client/expert-dm')) return 'dm';
+    if (pathname.includes('/client/messages')) return 'dm';
     if (pathname.includes('/client/expert')) return 'experts';
     if (pathname.includes('/client/profile')) return 'profile';
     return 'home';
@@ -42,7 +42,7 @@ export default function ClientLayout({ children }) {
         router.push('/client/create-query');
         break;
       case 'dm':
-        router.push('/client/expert-dm');
+        router.push('/client/messages');
         break;
       case 'experts':
         router.push('/client/expert');
