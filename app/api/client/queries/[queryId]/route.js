@@ -75,40 +75,36 @@ export async function GET(req, { params }) {
 
 // DELETE CLIENT QUERY
 export async function DELETE(req, { params }) {
-  const url = new URL(req.url);
-  const queryId= url.searchParams.get("queryId");
-  const clientId = url.searchParams.get("clientId");
-
-  if (!queryId) return Response.json({ error: "queryId required" }, { status: 400 });
-  if (!clientId) return Response.json({ error: "clientId required" }, { status: 400 });
-
-  const check = await db
-    .select()
-    .from(queries)
-    .where(and(eq(queries.queryId, queryId), eq(queries.clientId, clientId)));
-
-  if (check.length === 0) {
-    return Response.json(
-      { error: "Not found or no permission" },
-      { status: 403 }
-    );
-  }
-
   try {
+    const { queryId } = params;
+
+    if (!queryId?.trim())
+      return Response.json({ error: "queryId required" }, { status: 400 });
+
+    const { clientId } = await req.json();
+
+    if (!clientId?.trim())
+      return Response.json({ error: "clientId required in body" }, { status: 400 });
+
+    const check = await db
+      .select()
+      .from(queries)
+      .where(and(eq(queries.queryId, queryId), eq(queries.clientId, clientId)));
+
+    if (check.length === 0) {
+      return Response.json(
+        { error: "Query not found or you do not have permission to delete this query" },
+        { status: 403 }
+      );
+    }
+
     await db.delete(queries).where(eq(queries.queryId, queryId));
 
-    return Response.json(
-      { message: "Query deleted successfully" },
-      { status: 200 }
-    );
+    return Response.json({ message: "Query deleted successfully" }, { status: 200 });
   } catch (err) {
     return Response.json(
-      {
-        error: "Failed to delete query",
-        details: err.message,
-      },
+      { error: "Failed to delete query", details: err.message },
       { status: 500 }
     );
   }
 }
-

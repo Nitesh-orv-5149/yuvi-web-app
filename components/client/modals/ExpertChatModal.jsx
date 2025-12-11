@@ -1,25 +1,9 @@
 'use client';
-import React,{useState,useEffect} from 'react';
+import React from 'react';
 import MessageList from '../expert-dm/MessageList';
 import MessageInput from '../expert-dm/MessageInput';
 
 export default function ExpertChatModal({ expert, onClose }) {
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    // Fetch messages for the expert when the modal opens
-    async function fetchMessages() {
-      try {
-        const response = await fetch(`/api/chat/messages?conversationId=${expert.conversationId}`);
-        const data = await response.json();
-        setMessages(data);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    }
-    fetchMessages();
-  }, [expert.conversationId]);
-
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end md:items-center justify-center p-4 animate-fadeIn">
 

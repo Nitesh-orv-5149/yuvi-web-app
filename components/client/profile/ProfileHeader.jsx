@@ -16,6 +16,7 @@ export default function ProfileHeader() {
             {session?.user?.name}
           </h1>
           <p className="text-[#a0a0b0] text-sm sm:text-base mb-2">{session?.user?.email}</p>
+          <p className="text-[#00d4ff] text-xs sm:text-sm font-medium">Member since 2025</p>
         </div>
       </div>
     </div>
