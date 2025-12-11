@@ -4,51 +4,83 @@ import { useState, useEffect } from "react";
 import BottomNav from "@/components/admin/BottomNav";
 import BottomSheet from "@/components/admin/BottomSheet";
 import CategoryCard from "@/components/admin/CategoryCard";
-
+import { getCategories, addCategory, deleteCategory, updateCategory } from "@/lib/apiFunctions/categories";
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
+  // Load categories from DB
   useEffect(() => {
-    setCategories([
-      { id: "c1", name: "Payments", desc: "Payment & billing related" },
-      { id: "c2", name: "Account", desc: "Account and settings" },
-    ]);
+    loadCategories();
   }, []);
 
+ async function loadCategories() {
+  try {
+    const data = await getCategories();
+    setCategories(data);
+  } catch (err) {
+    console.log("Error fetching:", err);
+  }
+}
+
+  // open add modal
   const openAdd = () => {
     setEditing(null);
     setOpen(true);
   };
 
+  // open edit modal
   const openEdit = (cat) => {
     setEditing(cat);
     setOpen(true);
   };
 
-  const remove = (cat) => {
-    if (!confirm(`Delete category "${cat.name}"?`)) return;
-    setCategories((prev) => prev.filter((c) => c.id !== cat.id));
+  // delete category
+  const remove = async (cat) => {
+     if (!confirm(`Delete category "${cat.name}"?`)) return;
+  try {
+    await deleteCategory(cat.category_id); // DELETE API
+    setCategories(prev => prev.filter(c => c.category_id !== cat.category_id));
+    // loadCategories();
+  } catch (err) { console.log(err); }
   };
 
-  const save = (data) => {
+  // add or update category
+  const save = async (data) => {
+      try {
     if (editing) {
-      setCategories((prev) =>
-        prev.map((c) => (c.id === editing.id ? { ...c, ...data } : c))
+      console.log("→ Updating:", editing.category_id, data);
+      await updateCategory(editing.category_id, data);
+      
+
+      // locally update UI instantly
+      setCategories(prev =>
+        prev.map(c =>
+          c.category_id === editing.category_id ? { ...c, ...data } : c
+        )
       );
+
     } else {
-      setCategories((prev) => [
-        { id: Date.now().toString(), ...data },
-        ...prev,
-      ]);
+      console.log("→ Adding new:", data);
+      await addCategory(data);
+
+      // refresh so UI shows new one
+      loadCategories();
     }
+
     setOpen(false);
+    setEditing(null);
+
+  } catch (err) {
+    console.log(err);
+  }
   };
 
   return (
     <div className="min-h-screen pb-24 bg-gradient-to-b from-[#0b0d11] to-[#1a1223] animate-fadeIn">
       <div className="max-w-2xl mx-auto p-4 space-y-4">
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-white">Categories</h1>
@@ -61,14 +93,14 @@ export default function CategoriesPage() {
           </button>
         </div>
 
-        {/* Category List */}
+        {/* Category Cards */}
         <div className="space-y-3">
           {categories.map((c) => (
             <CategoryCard
-              key={c.id}
+              key={c.category_id}
               category={c}
-              onEdit={openEdit}
-              onDelete={remove}
+              onEdit={() => openEdit(c)}
+              onDelete={() => remove(c)}
             />
           ))}
         </div>
@@ -76,17 +108,9 @@ export default function CategoriesPage() {
 
       <BottomNav />
 
-      {/* Bottom Sheet */}
-      <BottomSheet
-        open={open}
-        onClose={() => setOpen(false)}
-        height="45vh"
-      >
-        <CategoryForm
-          initial={editing}
-          onCancel={() => setOpen(false)}
-          onSave={save}
-        />
+      {/* Modal */}
+      <BottomSheet open={open} onClose={() => setOpen(false)} height="45vh">
+        <CategoryForm initial={editing} onCancel={() => setOpen(false)} onSave={save} />
       </BottomSheet>
     </div>
   );
@@ -96,62 +120,45 @@ function CategoryForm({ initial, onCancel, onSave }) {
   const [name, setName] = useState(initial?.name || "");
   const [desc, setDesc] = useState(initial?.desc || "");
 
+  useEffect(() => {
+    setName(initial?.name || "");
+    setDesc(initial?.desc || "");
+  }, [initial]);
   return (
     <div className="text-white space-y-4">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-lg font-semibold">
-          {initial ? "Edit Category" : "Add Category"}
-        </h3>
 
-        <button
-          onClick={onCancel}
-          className="text-blue-300 hover:text-blue-400 transition"
-        >
-          Close
-        </button>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-lg font-semibold">{initial ? "Edit Category" : "Add Category"}</h3>
+        <button onClick={onCancel} className="text-blue-300 hover:text-blue-400 transition">Close</button>
       </div>
 
-      {/* Input Fields */}
       <div className="space-y-4">
-
-        <div className="space-y-1">
+        <div>
           <label className="text-sm text-blue-200">Name</label>
           <input
-            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
 
-        <div className="space-y-1">
+        <div>
           <label className="text-sm text-blue-200">Description</label>
           <input
-            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white"
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
           />
         </div>
-
       </div>
 
-      {/* Buttons */}
       <div className="flex justify-end gap-3 pt-2">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 rounded-lg bg-white/5 text-blue-200 hover:bg-white/10 transition"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={() => onSave({ name, desc })}
-          className="px-4 py-2 rounded-lg text-white font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-[1.02] transition"
-        >
+        <button onClick={onCancel} className="px-4 py-2 rounded-lg bg-white/5 text-blue-200">Cancel</button>
+        <button onClick={() => onSave({ name, desc })} className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           Save
         </button>
       </div>
+
     </div>
   );
 }

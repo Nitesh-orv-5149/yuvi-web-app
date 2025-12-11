@@ -3,37 +3,35 @@ import { categories } from "@/lib/schema/index";
 import { verifyAdmin } from "@/lib/auth/authUtils";
 import { eq } from "drizzle-orm";
 
-
-// fetch a perticular category
-export async function GET(_, { params }) {
-  const { categoryId } = params;
-  const result = await db.select().from(categories).where(eq(categories.categoryId, categoryId));
-
-  if (result.length === 0) return Response.json({ message: "Category not found" }, { status: 404 });
-  return Response.json(result[0]);
-}
-
-
 // update a particular category
-export async function PUT(req, { params }) {
-  await verifyAdmin(req);
-  const { categoryId } = params;
-  const { name } = await req.json();
+export async function PUT(req, context) {
+  try {
+    const params = await context.params;               // ⭐ must await
 
-  const updated = await db.update(categories)
-    .set({ name })
-    .where(eq(categories.categoryId, categoryId))
-    .returning();
+    const id = params.categoriesId;                    // ⭐ correct param key
 
-  return Response.json({ message: "Category updated", updated });
+    const { name, desc } = await req.json();
+
+    console.log("UPDATE REQUEST ->", { id, name, desc });
+
+    await db.update(categories)
+      .set({ name, desc })
+      .where(eq(categories.category_id, id));
+
+    return Response.json({ message: "Updated Successfully" });
+
+  } catch (err) {
+    console.error(err);
+    return Response.json({ error: "Update failed" }, { status: 500 });
+  }
 }
-
 
 // DELETE the selected category
-export async function DELETE(req, { params }) {
-  await verifyAdmin(req);
-  const { categoryId } = params;
+export async function DELETE(req, context) 
+{ const { categoriesId } = await context.params;
+ console.log("DELETE executed =>", categoriesId); 
+ await db.delete(categories) 
+  .where(eq(categories.category_id, categoriesId));
+  return Response.json({ message: "Category deleted" }); }
 
-  await db.delete(categories).where(eq(categories.categoryId, categoryId));
-  return Response.json({ message: "Category deleted successfully" });
-}
+

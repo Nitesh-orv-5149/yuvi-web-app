@@ -9,30 +9,20 @@ export async function POST(req) {
 
   try {
     const { email, password } = await req.json();
-
     console.log("LOGIN EMAIL:", email); 
-
     const result = await db.select().from(admin).where(eq(admin.email, email));
-
     console.log("DB RESULT:", result); 
 
     if (result.length === 0) {
       return Response.json({ message: "Admin not found" }, { status: 404 });
     }
-
     const adminUser = result[0];
-
     const match = await bcrypt.compare(password, adminUser.password);
 
     if (!match) {
       return Response.json({ message: "Incorrect password" }, { status: 401 });
     }
-
-    const token = jwt.sign(
-      { adminId: adminUser.adminId },
-      process.env.ADMIN_SECRET,
-      { expiresIn: "5d" }
-    );
+    const token = jwt.sign({ adminId: adminUser.adminId },process.env.ADMIN_SECRET, { expiresIn: "5d" } );
 
     return Response.json({
       message: "Login successful",

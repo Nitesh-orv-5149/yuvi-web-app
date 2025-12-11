@@ -1,97 +1,126 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import BottomNav from "@/components/admin/BottomNav";
-import BottomSheet from "@/components/admin/BottomSheet";
-import ExpertCard from "@/components/admin/ExpertCard";
-import ExpertForm from "@/components/admin/ExpertForm";
 
-export default function ExpertsPage() {
-  const [experts, setExperts] = useState([]);
-  const [openSheet, setOpenSheet] = useState(false);
-  const [editing, setEditing] = useState(null);
+export default function ManageExpertsPage() {
+  const [pending, setPending] = useState([]);
+  const [approved, setApproved] = useState([]);
+
+  // ---------------------------
+  // FETCH EXPERTS
+  // ---------------------------
+  const loadExperts = async () => {
+    try {
+      const res = await axios.get("/api/admin/experts");
+      const all = res.data;
+
+      setPending(all.filter((e) => !e.isApproved));
+      setApproved(all.filter((e) => e.isApproved));
+    } catch (err) {
+      console.error("LOAD EXPERTS ERROR:", err);
+    }
+  };
 
   useEffect(() => {
-    // Mock data (replace with API)
-    setExperts([
-      { id: "e1", name: "Alice Kumar", tags: ["Payments", "KYC"], bio: "Payments specialist" },
-      { id: "e2", name: "Rahul Singh", tags: ["Account"], bio: "Account support expert" },
-    ]);
+    loadExperts();
   }, []);
 
-  const openAdd = () => {
-    setEditing(null);
-    setOpenSheet(true);
-  };
-
-  const openEdit = (expert) => {
-    setEditing(expert);
-    setOpenSheet(true);
-  };
-
-  const removeExpert = (expert) => {
-    if (!confirm(`Delete expert "${expert.name}"?`)) return;
-    setExperts((prev) => prev.filter((x) => x.id !== expert.id));
-  };
-
-  const saveExpert = (data) => {
-    if (editing) {
-      setExperts((prev) =>
-        prev.map((ex) => (ex.id === editing.id ? { ...ex, ...data } : ex))
-      );
-    } else {
-      setExperts((prev) => [
-        { id: Date.now().toString(), ...data },
-        ...prev,
-      ]);
+  // ---------------------------
+  // APPROVE EXPERT
+  // ---------------------------
+  const approveExpert = async (id) => {
+    try {
+      await axios.patch(`/api/admin/experts/${id}`, {
+        isApproved: true,
+      });
+      loadExperts(); // refresh UI
+    } catch (err) {
+      console.error("APPROVE ERROR:", err);
     }
-    setOpenSheet(false);
+  };
+
+  // ---------------------------
+  // DELETE EXPERT
+  // ---------------------------
+  const deleteExpert = async (id) => {
+    try {
+      await axios.delete(`/api/admin/experts/${id}`);
+      loadExperts(); // refresh UI
+    } catch (err) {
+      console.error("DELETE ERROR:", err);
+    }
   };
 
   return (
-    <div className="min-h-screen pb-24 bg-[linear-gradient(180deg,#0b0d11,#1a1223)]">
+    <div className="min-h-screen pb-24 bg-gradient-to-b from-[#0b0d11] to-[#1a1223] text-white p-5">
+      <h1 className="text-2xl font-bold mb-6">Manage Experts</h1>
 
-      <div className="max-w-2xl mx-auto p-4 space-y-4">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-blue-100 drop-shadow">Experts</h1>
+      {/* ------------------- PENDING SECTION ------------------- */}
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold text-blue-400 mb-3">Pending Requests</h2>
 
-          <button
-            onClick={openAdd}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 
-                       text-white shadow-md shadow-blue-600/30 hover:scale-105 transition"
-          >
-            + Add
-          </button>
-        </div>
+        {pending.length === 0 ? (
+          <p className="text-white/50">No pending requests.</p>
+        ) : (
+          pending.map((exp) => (
+            <div
+              key={exp.expertId}
+              className="bg-black/30 border border-white/10 rounded-xl p-4 mb-3"
+            >
+              <h3 className="text-lg font-semibold">{exp.name}</h3>
+              <p className="text-sm text-blue-300">{exp.domain}</p>
+              <p className="text-sm text-white/60">{exp.email}</p>
 
-        {/* Expert cards */}
-        <div className="grid gap-4">
-          {experts.map((expert) => (
-            <ExpertCard
-              key={expert.id}
-              expert={expert}
-              onEdit={openEdit}
-              onDelete={removeExpert}
-            />
-          ))}
-        </div>
-      </div>
+              <div className="flex gap-3 mt-3">
+                <button
+                  onClick={() => approveExpert(exp.expertId)}
+                  className="px-3 py-2 rounded-lg bg-green-600 hover:bg-green-700"
+                >
+                  Approve
+                </button>
+
+                <button
+                  onClick={() => deleteExpert(exp.expertId)}
+                  className="px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </section>
+
+      {/* ------------------- APPROVED SECTION ------------------- */}
+      <section>
+        <h2 className="text-xl font-semibold text-green-400 mb-3">Approved Experts</h2>
+
+        {approved.length === 0 ? (
+          <p className="text-white/50">No approved experts yet.</p>
+        ) : (
+          approved.map((exp) => (
+            <div
+              key={exp.expertId}
+              className="bg-black/30 border border-white/10 rounded-xl p-4 mb-3"
+            >
+              <h3 className="text-lg font-semibold">{exp.name}</h3>
+              <p className="text-sm text-blue-300">{exp.domain}</p>
+              <p className="text-sm text-white/60">{exp.email}</p>
+
+              <button
+                onClick={() => deleteExpert(exp.expertId)}
+                className="mt-3 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700"
+              >
+                Remove
+              </button>
+            </div>
+          ))
+        )}
+      </section>
 
       <BottomNav />
-
-      {/* Bottom Sheet */}
-      <BottomSheet
-        open={openSheet}
-        onClose={() => setOpenSheet(false)}
-        height="60vh"
-      >
-        <ExpertForm
-          initial={editing}
-          onCancel={() => setOpenSheet(false)}
-          onSave={saveExpert}
-        />
-      </BottomSheet>
     </div>
   );
 }
