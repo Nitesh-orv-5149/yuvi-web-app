@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 
-const password = "admin123";   // your chosen password
+const password = "admin123";   
 
 const hash = bcrypt.hashSync(password, 10);
 console.log("HASHED PASSWORD = ", hash);

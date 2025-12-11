@@ -1,39 +1,54 @@
-import { db } from "@/lib/schema/db";
+import { db } from "@/lib/db";
 import { experts } from "@/lib/schema/index";
-import { verifyAdmin } from "@/lib/auth/authUtils";
 import { eq } from "drizzle-orm";
+import { verifyAdmin } from "@/lib/auth/authUtils";
 
-//EDIT/Update THE EXPERT
+
+
+// ADMIN approving an expert
 export async function PATCH(req, { params }) {
   try {
     await verifyAdmin(req);
 
-    const { expertId } = params;
-    const body = await req.json();
+    const { expertId } = await params;   // ✅ FIX: await params
+    const { isApproved } = await req.json();
 
-    const updated = await db
+    await db
       .update(experts)
-      .set(body)
-      .where(eq(experts.expertId, expertId))
-      .returning();
+      .set({ isApproved })
+      .where(eq(experts.expertId, expertId));
 
-    return Response.json(updated);
+    return Response.json({
+      message: "Expert updated successfully",
+      expertId,
+      isApproved,
+    });
   } catch (err) {
+    console.error("APPROVE ERROR:", err);
     return Response.json({ error: err.message }, { status: 500 });
   }
 }
 
-//DELETE THE EXPERT
+
+
+//admin can remove am exitisting expert
 export async function DELETE(req, { params }) {
   try {
     await verifyAdmin(req);
 
-    const { expertId } = params;
+    const { expertId } = await params;  // ✅ FIX: await params
 
-    await db.delete(experts).where(eq(experts.expertId, expertId));
+    await db
+      .delete(experts)
+      .where(eq(experts.expertId, expertId));
 
-    return Response.json({ message: "Expert deleted" });
+    return Response.json({
+      message: "Expert deleted successfully",
+      expertId,
+    });
+
   } catch (err) {
+    console.error("DELETE ERROR:", err);
     return Response.json({ error: err.message }, { status: 500 });
   }
 }

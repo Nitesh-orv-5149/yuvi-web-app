@@ -1,41 +1,30 @@
-import { db } from "@/lib/schema/db";
-import { categories } from "@/lib/schema/index";
-import { verifyAdmin } from "@/lib/auth/authUtils";
+import { db } from "@/lib/db";
+import { categories } from "@/lib/schema"; // ensure schema/index.js exports categories
+import { checkAuthLoginAdmin } from "@/lib/auth/authUtils";
 import { eq } from "drizzle-orm";
 
-//Register a category 
-export async function POST(req) {
+// verify user session (only admin allowed)
+async function verifyAdmin(req) {
+  const session = await getServerSession();
+  if (!session || session.user.role !== "admin") {
+    return Response.json({ message: "Unauthorized" }, { status: 401 });
+  }
+  return session;
+}
+
+//  GET all categories
+export async function GET() {
   try {
-    await verifyAdmin(req);
-
-    const { name, categoryId } = await req.json();
-
-    // Check duplicate
-    const exists = await db.select().from(categories).where(eq(categories.name, name));
-    if (exists.length > 0) {
-      return Response.json({ message: "Domain already exists" }, { status: 400 });
-    }
-
-    const domain = await db.insert(categories).values({
-      categoryId,
-      name,
-    }).returning();
-
-    return Response.json({ message: "Domain created", domain });
+    const result = await db.select().from(categories);
+    return Response.json(result);
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
   }
 }
 
-//view a category
-export async function GET(req) {
-  try {
-    await verifyAdmin(req);
-
-    const allCategories = await db.select().from(categories);
-
-    return Response.json(allCategories);
-  } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
-  }
+//  POST
+export async function POST(req) {
+  const { name, desc } = await req.json();
+  await db.insert(categories).values({ name, desc });
+  return Response.json({ message: "Category added" });
 }
