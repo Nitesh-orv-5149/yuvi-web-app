@@ -38,7 +38,7 @@ export default function ProfileTab() {
   }, []);
 
   if (status === "loading") {
-    <Loading/>
+    return <Loading/>
   }
 
   return (
