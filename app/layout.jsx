@@ -13,6 +13,8 @@ const poppins = Poppins({
 export const metadata = {
   title: "Yuvi",
   description: "Query Raising app",
+  manifest: "/manifest.json",
+  themeColor: "#000000"
 };
 
 export default async function RootLayout({ children }) {
