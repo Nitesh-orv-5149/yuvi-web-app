@@ -12,7 +12,7 @@ import Link from 'next/link';
 export default function ProfileTab() {
 
   const { data: session, status } = useSession();
-  const user = session.user
+  const user = session?.user
 
   const [numberOfQueries, setNumberOfQueries] = useState(0)
   const [answeredQueries, setAnsweredQueries] = useState([])
