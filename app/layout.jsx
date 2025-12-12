@@ -21,21 +21,12 @@ export const viewport = {
 }
 
 export default async function RootLayout({ children }) {
-
-  let session = null;
-  try {
-    session = await getServerSession(authOptions);
-    console.log("SESSION FETCHED:", session);
-  } catch (err) {
-    console.error("SESSION FETCH FAILED:", err);
-  }
-
   return (
     <html lang="en">
       <body
         className={`${poppins.variable} antialiased`}
       >
-        <AuthSessionProvider session={session}>
+        <AuthSessionProvider>
         {children}
         </AuthSessionProvider>
       </body>
