@@ -25,7 +25,7 @@ export default function ClientLayout({ children }) {
   }
 
   const getActiveTab = () => {
-    if (pathname.includes('/client/home')) return 'home';
+    if (pathname.includes('/')) return 'home';
     if (pathname.includes('/client/create-query')) return 'post';
     if (pathname.includes('/client/expert-dm')) return 'dm';
     if (pathname.includes('/client/expert')) return 'experts';
@@ -36,7 +36,7 @@ export default function ClientLayout({ children }) {
   const handleTabChange = (tab) => {
     switch (tab) {
       case 'home':
-        router.push('/client/home');
+        router.push('/');
         break;
       case 'post':
         router.push('/client/create-query');
