@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+
 import axios from "axios";
 
 export default function QueryDetailModal({ query, onClose }) {
@@ -100,9 +102,11 @@ export default function QueryDetailModal({ query, onClose }) {
                     className="bg-[#0f0f23] border border-[#2a2a3e] rounded-lg p-4"
                   >
                     <div className="flex justify-between items-start mb-2">
+                      <Link href="/client/expert-dm">
                       <p className="font-semibold text-[#00d4ff] text-sm">
                         🎯 {answer.expertName}
-                      </p>
+                      </p>  
+                      </Link>
                     </div>
                     <p className="text-[#a0a0b0] text-sm leading-relaxed">
                       {answer?.answerBody}

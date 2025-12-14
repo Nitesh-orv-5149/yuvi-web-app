@@ -5,12 +5,16 @@ import SearchBar from '@/components/client/home/SearchBar';
 import QueriesList from '@/components/client/home/QueriesList';
 import QueryDetailModal from '@/components/client/modals/QueryDetailModal';
 import { fetchAllQueries } from '@/lib/apiFunctions/fetchAllQueries';
+import ClientNavbar from '@/components/client/ClientNavbar'
+import ClientBottomNav from '@/components/client/ClientBottomNav';
+import { useSession } from 'next-auth/react';
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [queries, setQueries] = useState([]);
   const router = useRouter();
+  const {data:session} = useSession();
 
   useEffect(() => {
     const loadData = async () => {
@@ -25,7 +29,8 @@ export default function HomePage() {
   );
 
   return (
-    <div className="animate-fadeIn">
+    <div className="animate-fadeIn pb-24 p-2">
+      <ClientNavbar />
       <SearchBar onSearch={setSearchTerm} />
 
       <div className="mb-6">
@@ -43,6 +48,7 @@ export default function HomePage() {
       {selectedQuery && (
         <QueryDetailModal query={selectedQuery} onClose={() => setSelectedQuery(null)} />
       )}
+        <ClientBottomNav />
     </div>
   );
 }

@@ -5,13 +5,14 @@ import Image from 'next/image';
 
 export default function ClientNavbar() {
   const { data: session } = useSession();
+  
 
   return (
     <nav className="sticky top-0 z-50 bg-blue-1000/80 backdrop-blur-md border-b border-[#2e2e49]">
       <div className="px-4 py-3 sm:px-6 sm:py-4">
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           {/* Logo + Brand (top-left) */}
-          <Link href="/client/home" className="flex items-center gap-2 sm:gap-3">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3">
             <Image
               src="/yuvilogo.png"
               alt="YuviCollab logo"
