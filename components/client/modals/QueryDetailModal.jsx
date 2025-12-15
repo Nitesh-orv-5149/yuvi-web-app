@@ -38,7 +38,7 @@ export default function QueryDetailModal({ query, onClose }) {
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-4 animate-fadeIn">
       <div className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-t-3xl md:rounded-3xl w-full md:max-w-2xl max-h-[90vh] overflow-y-auto animate-slideUp shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-linear-to-r from-[#00d4ff] to-[#ff006e] border-b border-[#2a2a3e] px-4 sm:px-6 py-4 flex justify-between items-center">
+        <div className="sticky top-0 bg-indigo-700 border-b border-[#2a2a3e] px-4 sm:px-6 py-4 flex justify-between items-center">
           <h2 className="font-bold text-white text-base sm:text-lg">
             Question Details
           </h2>
@@ -56,11 +56,11 @@ export default function QueryDetailModal({ query, onClose }) {
           <div>
             <div className="flex gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#8800ff] flex items-center justify-center text-white font-bold shadow-md">
-                {query.clientName.charAt(0).toUpperCase()}
+                {query.clientName?.charAt(0).toUpperCase() ?? "Y"}
               </div>
               <div className="flex-1">
                 <p className="text-white font-semibold text-sm">
-                  {query.clientName}
+                  {query.clientName ?? "You"}
                 </p>
                 <p className="text-[#a0a0b0] text-xs">
                   {formattedDate(query.createdAt)}

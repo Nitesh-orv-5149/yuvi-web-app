@@ -11,27 +11,27 @@ export default function CreateQueryPage() {
   const router = useRouter();
 
   const handleSubmit = async (formData) => {
+    if (!session?.user?.id) {
+      alert('You must be logged in');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      console.log('Submitting query:', formData);
-
       const body = {
         questionTitle: formData.title,
         questionBody: formData.description,
         categoryId: formData.category,
-        clientId: session.user.id
-      }
-      
-      // Simulate API call
+        clientId: session.user.id,
+      };
+
       await axios.post('/api/client/queries', body);
-      
-      // Show success message
-      alert('Question posted successfully!');
+
+      alert('Question posted successfully');
       router.push('/client/home');
-    } catch (error) {
-      console.error('Error posting question:', error);
-      alert('Failed to post question. Please try again.');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to post question');
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +46,7 @@ export default function CreateQueryPage() {
           </span>
         </h1>
         <p className="text-[#a0a0b0] text-sm sm:text-base">
-          Get answers from experienced experts in our community
+          Get answers from experienced experts
         </p>
       </div>
 

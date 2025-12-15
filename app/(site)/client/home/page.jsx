@@ -5,23 +5,17 @@ import SearchBar from '@/components/client/home/SearchBar';
 import QueriesList from '@/components/client/home/QueriesList';
 import QueryDetailModal from '@/components/client/modals/QueryDetailModal';
 import { fetchAllQueries } from '@/lib/apiFunctions/fetchAllQueries';
-import ClientNavbar from '@/components/client/ClientNavbar'
-import ClientBottomNav from '@/components/client/ClientBottomNav';
-import { useSession } from 'next-auth/react';
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [queries, setQueries] = useState([]);
   const router = useRouter();
-  const {data:session} = useSession();
 
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchAllQueries();
       setQueries(data || []); 
-      console.log("queries fetched: ", data);
-      
     };
 
     loadData();
@@ -31,14 +25,13 @@ export default function HomePage() {
   );
 
   return (
-    <div className="animate-fadeIn pb-24 p-2">
-      <ClientNavbar />
+    <div className="animate-fadeIn">
       <SearchBar onSearch={setSearchTerm} />
 
       <div className="mb-6">
         <button
           onClick={() => router.push('/client/create-query')}
-          className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-indigo-700 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 text-sm sm:text-base flex items-center justify-center gap-2 group"
+          className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-cyan-800 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 text-sm sm:text-base flex items-center justify-center gap-2 group"
         >
           <span className="text-lg group-hover:scale-110 transition duration-300">✏️</span>
           <span>Ask a Question</span>
@@ -50,7 +43,6 @@ export default function HomePage() {
       {selectedQuery && (
         <QueryDetailModal query={selectedQuery} onClose={() => setSelectedQuery(null)} />
       )}
-        <ClientBottomNav />
     </div>
   );
 }

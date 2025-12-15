@@ -8,7 +8,7 @@ export default function ClientBottomNav({ activeTab, onTabChange }) {
   const tabs = [
     { id: "home", icon: "🏠", label: "Home", path: "/" },
     { id: "post", icon: "✏️", label: "Ask", path: "/client/create-query" },
-    { id: "dm", icon: "💬", label: "Messages", path: "/client/expert-dm" },
+    { id: "dm", icon: "💬", label: "Messages", path: "/client/messages" },
     { id: "profile", icon: "👤", label: "Profile", path: "/client/profile" },
   ];
 

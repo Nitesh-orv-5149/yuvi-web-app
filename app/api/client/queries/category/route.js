@@ -5,6 +5,7 @@ import { categories } from "@/lib/schema";
 export async function GET() {
   try {
     const rows = await db.select().from(categories);
+    console.log("Fetched categories:", rows);
     return Response.json(rows, { status: 200 });
   } catch (err) {
     return Response.json(

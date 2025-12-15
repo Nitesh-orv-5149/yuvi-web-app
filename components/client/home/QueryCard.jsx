@@ -1,6 +1,11 @@
 'use client';
 
+import { useSession } from "next-auth/react";
+
 export default function QueryCard({ query, onClick }) {
+
+  const {data:session} = useSession();
+
   return (
     <div
       onClick={onClick}
@@ -29,16 +34,16 @@ export default function QueryCard({ query, onClick }) {
               {query.categoryName || "category"}
             </span>
             <span className="inline-block text-[#a0a0b0] text-xs">
-              by <span className="text-white font-medium">{query.clientName}</span>
+              by <span className="text-white font-medium">{session.user.username}</span>
             </span>
           </div>
 
-          <div className="flex gap-4 text-xs text-[#a0a0b0] border-t border-[#2a2a3e] pt-2.5">
+          {/* <div className="flex gap-4 text-xs text-[#a0a0b0] border-t border-[#2a2a3e] pt-2.5">
             <span className="flex items-center gap-1">
               <span>💬</span>
-              <span>{query.answers} answers</span>
+              <span>{query.answers.length} answers</span>
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

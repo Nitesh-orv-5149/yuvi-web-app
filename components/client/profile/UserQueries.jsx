@@ -14,7 +14,7 @@ export default function UserQueries({ queries = [] }) {
       {queries.length > 0 ? (
         <div className="space-y-3">
           {queries.slice(0, 3).map((query) => (
-            <div key={query.id} className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-lg p-4 hover:border-[#00d4ff] transition duration-300">
+            <div key={query.queryId} className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-lg p-4 hover:border-[#00d4ff] transition duration-300">
               <h3 className="text-white font-semibold text-sm sm:text-base line-clamp-2 mb-2">
                 {query.title}
               </h3>
@@ -22,7 +22,7 @@ export default function UserQueries({ queries = [] }) {
                 <span className="inline-block bg-[#00d4ff]/10 text-[#00d4ff] px-2 py-1 rounded">
                   {query.category}
                 </span>
-                <span>💬 {query.answers} answers</span>
+                <span></span>
               </div>
             </div>
           ))}

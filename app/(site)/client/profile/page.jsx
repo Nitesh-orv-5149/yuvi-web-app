@@ -1,16 +1,57 @@
 'use client';
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
+
 import ProfileHeader from '@/components/client/profile/ProfileHeader';
-import ProfileStats from '@/components/client/profile/ProfileStats';
-import UserQueries from '@/components/client/profile/UserQueries';
 import ProfileActions from '@/components/client/profile/ProfileActions';
-import { mockQueries } from '@/lib/mockData';
+import QueriesList from '@/components/client/home/QueriesList';
+import QueryDetailModal from '@/components/client/modals/QueryDetailModal';
 
 export default function ProfilePage() {
+  const { data: session, status } = useSession();
+
+  const [queries, setQueries] = useState([]);
+  const [selectedQuery, setSelectedQuery] = useState(null);
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+
+    const fetchQueries = async () => {
+      try {
+        const res = await axios.get('/api/client/queries');
+
+        const userQueries = res.data.filter(
+          (q) => q.clientId === session.user.id
+        );
+
+        console.log('Fetched user queries:', userQueries);
+        setQueries(userQueries);
+      } catch (err) {
+        console.error('Error fetching queries:', err);
+      }
+    };
+
+    fetchQueries();
+  }, [status, session]);
+
   return (
     <div className="animate-fadeIn max-w-2xl">
       <ProfileHeader />
-      <ProfileStats />
-      <UserQueries queries={mockQueries} />
+
+      <QueriesList
+        queries={queries}
+        onQuerySelect={setSelectedQuery}
+      />
+
+      {selectedQuery && (
+        <QueryDetailModal
+          query={selectedQuery}
+          onClose={() => setSelectedQuery(null)}
+        />
+      )}
+
       <ProfileActions />
     </div>
   );

@@ -16,7 +16,7 @@ export async function PUT(req, context) {
 
     await db.update(categories)
       .set({ name, desc })
-      .where(eq(categories.category_id, id));
+      .where(eq(categories.categoryId, id));
 
     return Response.json({ message: "Updated Successfully" });
 
@@ -31,7 +31,7 @@ export async function DELETE(req, context)
 { const { categoriesId } = await context.params;
  console.log("DELETE executed =>", categoriesId); 
  await db.delete(categories) 
-  .where(eq(categories.category_id, categoriesId));
+  .where(eq(categories.categoryId, categoriesId));
   return Response.json({ message: "Category deleted" }); }
 
 

@@ -1,6 +1,5 @@
 'use client';
 import { useState,useEffect } from 'react';
-import { CATEGORIES } from '@/lib/constants';
 import axios from 'axios';
 
 export default function QueryForm({ onSubmit, isLoading }) {

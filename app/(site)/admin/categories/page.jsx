@@ -40,8 +40,8 @@ export default function CategoriesPage() {
   const remove = async (cat) => {
      if (!confirm(`Delete category "${cat.name}"?`)) return;
   try {
-    await deleteCategory(cat.category_id); // DELETE API
-    setCategories(prev => prev.filter(c => c.category_id !== cat.category_id));
+    await deleteCategory(cat.categoryId); // DELETE API
+    setCategories(prev => prev.filter(c => c.categoryId !== cat.categoryId));
     // loadCategories();
   } catch (err) { console.log(err); }
   };
@@ -50,14 +50,14 @@ export default function CategoriesPage() {
   const save = async (data) => {
       try {
     if (editing) {
-      console.log("→ Updating:", editing.category_id, data);
-      await updateCategory(editing.category_id, data);
+      console.log("→ Updating:", editing.categoryId, data);
+      await updateCategory(editing.categoryId, data);
       
 
       // locally update UI instantly
       setCategories(prev =>
         prev.map(c =>
-          c.category_id === editing.category_id ? { ...c, ...data } : c
+          c.categoryId === editing.categoryId ? { ...c, ...data } : c
         )
       );
 
@@ -97,7 +97,7 @@ export default function CategoriesPage() {
         <div className="space-y-3">
           {categories.map((c) => (
             <CategoryCard
-              key={c.category_id}
+              key={c.categoryId}
               category={c}
               onEdit={() => openEdit(c)}
               onDelete={() => remove(c)}
