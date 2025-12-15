@@ -2,54 +2,39 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req) {
-  const url = req.nextUrl;
-  const path = url.pathname;
+  const { pathname } = req.nextUrl;
 
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // PUBLIC ROUTES THAT REQUIRE NO AUTH
-  const publicRoutes = ["/auth", "/auth/admin", "/"];
+  console.log("Middleware Token:", token);
 
-  if (publicRoutes.includes(path)) {
+  // allow auth routes always
+  if (pathname.startsWith("/auth")) {
     return NextResponse.next();
   }
 
-  // NON-AUTHENTICATED USERS
+  // unauthenticated
   if (!token) {
-    if (path.startsWith("/admin")) {
-      url.pathname = "/auth/admin";
-      return NextResponse.redirect(url);
+    if (pathname.startsWith("/admin")) {
+      return NextResponse.redirect(new URL("/auth/admin", req.url));
     }
-
-    url.pathname = "/auth";
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL("/auth", req.url));
   }
 
-  // ADMIN-ONLY ROUTES
-  if (path.startsWith("/admin")) {
-    if (token.role !== "admin") {
-      url.pathname = "/auth/admin";
-      return NextResponse.redirect(url);
-    }
+  // role checks
+  if (pathname.startsWith("/admin") && token.role !== "admin") {
+    return NextResponse.redirect(new URL("/auth/admin", req.url));
   }
 
-  // CLIENT-ONLY ROUTES
-  if (path.startsWith("/client")) {
-    if (token.role !== "client") {
-      url.pathname = "/auth";
-      return NextResponse.redirect(url);
-    }
+  if (pathname.startsWith("/client") && token.role !== "client") {
+    return NextResponse.redirect(new URL("/auth", req.url));
   }
 
-  // EXPERT-ONLY ROUTES
-  if (path.startsWith("/expert")) {
-    if (token.role !== "expert") {
-      url.pathname = "/auth";
-      return NextResponse.redirect(url);
-    }
+  if (pathname.startsWith("/expert") && token.role !== "expert") {
+    return NextResponse.redirect(new URL("/auth", req.url));
   }
 
   return NextResponse.next();
@@ -60,7 +45,5 @@ export const config = {
     "/admin/:path*",
     "/client/:path*",
     "/expert/:path*",
-    "/auth",
-    "/",
   ],
 };
