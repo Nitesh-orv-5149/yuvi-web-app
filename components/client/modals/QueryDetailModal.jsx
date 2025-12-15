@@ -1,19 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import axios from "axios";
 
-export default function QueryDetailModal({ query, onClose }) {
+export default function QueryDetailModal({ query, onClose, isClient }) {
   const [liked, setLiked] = useState(false);
   const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const res = await axios.get("/api/client/queries");
         const data = res.data;
-        setAnswers(data.map(q => q.answers).flat().filter(a => a.queryId === query.queryId));
+        setAnswers(
+          data
+            .map((q) => q.answers)
+            .flat()
+            .filter((a) => a.queryId === query.queryId)
+        );
       } catch (error) {
         console.error("Error fetching queries:", error);
       }
@@ -33,6 +40,31 @@ export default function QueryDetailModal({ query, onClose }) {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  const handleDelete = async (queryId, clientId) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this query?"
+  );
+
+  if (!confirmed) return;
+
+  try {
+    setLoading(true);
+
+    await axios.delete(`/api/client/queries/${queryId}`, {
+      data: { clientId },
+    });
+    
+    window.location.reload();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete query");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-4 animate-fadeIn">
@@ -72,13 +104,33 @@ export default function QueryDetailModal({ query, onClose }) {
               {query.questionTitle}
             </h3>
             <p className="text-[#a0a0b0] text-sm leading-relaxed mb-4">
-              {query.question}
+              {query.question || query.questionBody}
             </p>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              <span className="inline-block bg-[#00d4ff]/20 text-[#00d4ff] px-3 py-1 rounded-full text-xs font-semibold">
-                {query.categoryName}
+              <span className=" bg-[#00d4ff]/20 text-[#00d4ff] px-2 py-1 rounded-full text-xs font-semibold flex items-center">
+                {query.categoryName || query.name}
               </span>
+              {isClient && (
+                <div className="deletebutton">
+                  <button
+                    className={`p-1 rounded-2xl transition ${
+                      loading
+                        ? "bg-red-300 cursor-not-allowed"
+                        : "bg-red-700 hover:bg-red-800"
+                    }`}
+                    onClick={() => handleDelete(query.queryId, query.clientId)}
+                    disabled={loading}
+                    title="Delete query"
+                  >
+                    {loading ? (
+                      <span className="text-white text-xs px-2">...</span>
+                    ) : (
+                      <Trash2 className="text-white" />
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4 text-xs text-[#a0a0b0] border-t border-[#2a2a3e] pt-4">
@@ -96,16 +148,16 @@ export default function QueryDetailModal({ query, onClose }) {
                 Answers ({answers.length})
               </h3>
               <div className="space-y-3">
-                {answers.map((answer,idx) => (
+                {answers.map((answer, idx) => (
                   <div
                     key={idx}
                     className="bg-[#0f0f23] border border-[#2a2a3e] rounded-lg p-4"
                   >
                     <div className="flex justify-between items-start mb-2">
                       <Link href="/client/expert-dm">
-                      <p className="font-semibold text-[#00d4ff] text-sm">
-                        🎯 {answer.expertName}
-                      </p>  
+                        <p className="font-semibold text-[#00d4ff] text-sm">
+                          🎯 {answer.expertName}
+                        </p>
                       </Link>
                     </div>
                     <p className="text-[#a0a0b0] text-sm leading-relaxed">
@@ -124,8 +176,7 @@ export default function QueryDetailModal({ query, onClose }) {
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 border-t border-[#2a2a3e] pt-6">
-          </div>
+          <div className="flex gap-3 border-t border-[#2a2a3e] pt-6"></div>
         </div>
       </div>
     </div>

@@ -76,7 +76,7 @@ export async function GET(req, { params }) {
 // DELETE CLIENT QUERY
 export async function DELETE(req, { params }) {
   try {
-    const { queryId } = params;
+    const { queryId } = await params;
 
     if (!queryId?.trim())
       return Response.json({ error: "queryId required" }, { status: 400 });

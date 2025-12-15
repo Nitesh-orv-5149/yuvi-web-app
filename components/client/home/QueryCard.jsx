@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import { useSession } from "next-auth/react";
 
 export default function QueryCard({ query, onClick }) {
+  const { data: session } = useSession();
   return (
     <div
       onClick={onClick}
@@ -11,7 +12,7 @@ export default function QueryCard({ query, onClick }) {
       <div className="flex gap-3">
         {/* Avatar */}
         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#8800ff] flex items-center justify-center flex-shrink-0 text-white font-bold text-sm sm:text-base shadow-md">
-          {query.clientName ? query.clientName.charAt(0).toUpperCase() : 'U'}
+          {query.clientName ? query.clientName.charAt(0).toUpperCase() : session.user.name.charAt(0).toUpperCase()}
         </div>
 
         {/* Content */}
@@ -23,15 +24,18 @@ export default function QueryCard({ query, onClick }) {
           </div>
 
           <p className="text-[#a0a0b0] text-xs sm:text-sm mb-3 line-clamp-1">
-            {query.question}
+            {query.question || query.questionBody}
           </p>
 
           <div className="flex flex-wrap gap-2 mb-2">
             <span className="inline-block bg-[#00d4ff]/10 text-[#00d4ff] px-2.5 py-0.5 rounded-full text-xs font-medium">
-              {query.categoryName || "category"}
+              {query.categoryName || query.name}
             </span>
             <span className="inline-block text-[#a0a0b0] text-xs">
-              by <span className="text-white font-medium">{query.clientName}</span>
+              by{" "}
+              <span className="text-white font-medium">
+                {query.clientName || session?.user.name}
+              </span>
             </span>
           </div>
 

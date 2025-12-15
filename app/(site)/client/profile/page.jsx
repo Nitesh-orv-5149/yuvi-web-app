@@ -20,14 +20,15 @@ export default function ProfilePage() {
 
     const fetchQueries = async () => {
       try {
-        const res = await axios.get('/api/client/queries');
-
-        const userQueries = res.data.filter(
-          (q) => q.clientId === session.user.id
-        );
-
-        console.log('Fetched user queries:', userQueries);
-        setQueries(userQueries);
+        const res = await axios.get(`/api/client/queries/my?clientId=${session.user.id}`);
+        let queryList = []
+        const userqueries = res.data.map((q)=>{
+          const userquery = q.queries;
+          const querycate= q.categories;
+          const finalquery =  {...userquery,...querycate}
+          queryList.push(finalquery)
+        })
+        setQueries(queryList);
       } catch (err) {
         console.error('Error fetching queries:', err);
       }
@@ -49,10 +50,13 @@ export default function ProfilePage() {
         <QueryDetailModal
           query={selectedQuery}
           onClose={() => setSelectedQuery(null)}
+          isClient={true}
         />
       )}
 
-      <ProfileActions />
+      <div className="actions mt-3">
+        <ProfileActions />
+      </div>
     </div>
   );
 }

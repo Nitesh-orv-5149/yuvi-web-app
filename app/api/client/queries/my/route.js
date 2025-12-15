@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { queries } from "@/lib/schema";
+import { queries, answers, experts,categories } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 // GET ALL QUERIES POSTED BY THE CLIENT
@@ -10,7 +10,13 @@ export async function GET(req) {
     if (!clientId?.trim())
       return Response.json({ error: "clientId required" }, { status: 400 });
 
-    const rows = await db.select().from(queries).where(eq(queries.clientId, clientId));
+    const rows = await db
+      .select()
+      .from(queries)
+      .where(eq(queries.clientId, clientId))
+      .leftJoin(answers, eq(queries.queryId, answers.queryId))
+      .leftJoin(experts, eq(answers.expertId, experts.expertId))
+      .leftJoin(categories, eq(queries.categoryId, categories.categoryId));
 
     return Response.json(rows, { status: 200 });
   } catch (err) {
