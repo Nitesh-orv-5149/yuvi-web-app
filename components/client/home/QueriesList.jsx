@@ -1,19 +1,9 @@
 'use client';
+import Loading from '@/components/ui/Loading';
 import QueryCard from './QueryCard';
 
 export default function QueriesList({ queries, onQuerySelect, isLoading }) {
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-lg p-4 animate-pulse">
-            <div className="h-12 bg-[#2a2a3e] rounded mb-3"></div>
-            <div className="h-4 bg-[#2a2a3e] rounded w-3/4"></div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  if (isLoading) return <Loading/>
 
   if (queries.length === 0) {
     return (

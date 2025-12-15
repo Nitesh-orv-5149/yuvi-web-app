@@ -32,7 +32,7 @@ export default function ClientNavbar() {
           </Link>
 
           {/* Right side: user + logout */}
-          {session && (
+          {session ? (
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="hidden sm:flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
@@ -55,7 +55,11 @@ export default function ClientNavbar() {
                 Sign Out
               </button>
             </div>
-          )}
+          ) :
+            <Link href={'/auth'}>
+             <button className='bg-indigo-600 px-3 py-2 rounded-full hover:bg-indigo-400 transition-all '>Sign In</button>
+            </Link>
+          }
         </div>
       </div>
     </nav>

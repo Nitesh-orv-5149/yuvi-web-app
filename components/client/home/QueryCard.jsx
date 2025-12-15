@@ -3,9 +3,6 @@
 import { useSession } from "next-auth/react";
 
 export default function QueryCard({ query, onClick }) {
-
-  const {data:session} = useSession();
-
   return (
     <div
       onClick={onClick}
@@ -34,7 +31,7 @@ export default function QueryCard({ query, onClick }) {
               {query.categoryName || "category"}
             </span>
             <span className="inline-block text-[#a0a0b0] text-xs">
-              by <span className="text-white font-medium">{session.user.username}</span>
+              by <span className="text-white font-medium">{query.clientName}</span>
             </span>
           </div>
 
