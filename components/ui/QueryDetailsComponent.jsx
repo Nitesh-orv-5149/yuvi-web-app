@@ -11,6 +11,7 @@ export default function QueryDetailsComponent({ data }) {
   const loggedExpertId = session?.user?.id;
 
   const { query, answers } = data;
+  console.log("QueryDetailsComponent data:", data);
 
   const [answer, setAnswer] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -83,6 +84,7 @@ export default function QueryDetailsComponent({ data }) {
       </a>
 
       <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 w-full max-w-2xl space-y-6">
+        <div className="flex gap-4 text-lg font-bold rounded-2xl"><span className="px-2 bg-cyan-700 rounded-full">{query.clientUsername.charAt(0).toUpperCase()}</span>{query.clientUsername}</div>
         
         {/* Question */}
         <h2 className="text-xl font-bold text-white">{query.questionTitle}</h2>

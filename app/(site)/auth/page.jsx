@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import axios from 'axios';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 // --- Reusable UI Components ---
 
@@ -79,9 +81,14 @@ const RoleToggle = ({ role, setRole }) => (
 // --- Main Component ---
 
 export default function AuthPage() {
+
+  const params = useSearchParams();
+  const router = useRouter();
+
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState('client'); // 'client' | 'expert'
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -101,28 +108,32 @@ export default function AuthPage() {
     setLoading(true);
     
     const { username, email, password, phone, categoryId, bio } = formData;
+    const normalizedUsername = username?.toLowerCase();
     
     try {
       if (isLogin) {
         console.log(`Attempting Sign In as ${role} for: ${username}`);
         
         const result = await signIn('credentials', { 
-          identifier: username ? username : email,
+          identifier: normalizedUsername || email,
           password: password, 
           role: role,
-          redirect: true,
-          callbackUrl: role === "client" ? "/" : "/expert/home" 
+          redirect: false,
         });
         
         if (result.error) {
+          setAuthError("Credentials are wrong");
           throw new Error(result.error);
         }
+
+        router.push(role === "client" ? "/" : "/expert/home");
+        return;
         
       } else {
         
         const registrationData = {
           role,
-          username,
+          username: normalizedUsername,
           email,
           password,
           phoneNumber: phone,
@@ -281,6 +292,12 @@ export default function AuthPage() {
         </div>
 
         <div className="bg-slate-900/80 p-6 border-t border-slate-800 text-center">
+          {authError && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-xl px-4 py-2 mb-4">
+                {authError}
+            </div>
+          )}
+
           <p className="text-slate-400 text-sm">
             {isLogin ? "Don't have an account yet?" : "Already have an account?"}
             <button 

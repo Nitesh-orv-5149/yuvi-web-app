@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import axios from "axios";
+import { startConversation } from "@/lib/apiFunctions/chatFunctions";
 
 export default function QueryDetailModal({ query, onClose, isClient }) {
   const [liked, setLiked] = useState(false);
@@ -44,28 +45,37 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
 
   const handleDelete = async (queryId, clientId) => {
   const confirmed = window.confirm(
-    "Are you sure you want to delete this query?"
-  );
+      "Are you sure you want to delete this query?"
+    );
 
-  if (!confirmed) return;
+    if (!confirmed) return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    await axios.delete(`/api/client/queries/${queryId}`, {
-      data: { clientId },
-    });
-    
-    window.location.reload();
+      await axios.delete(`/api/client/queries/${queryId}`, {
+        data: { clientId },
+      });
+      
+      window.location.reload();
 
-  } catch (err) {
-    console.error(err);
-    alert("Failed to delete query");
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete query");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+    const handleStartChat = async (expertId) => {
+      try {
+        const conversationId = await startConversation(expertId);
+        window.location.href = `/client/messages/${conversationId}`;
+      } catch (err) {
+        console.error(err);
+        alert("Failed to start chat");
+      }
+    };
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-4 animate-fadeIn">
@@ -154,13 +164,10 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
                     key={idx}
                     className="bg-[#0f0f23] border border-[#2a2a3e] rounded-lg p-4"
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <Link href="/client/expert-dm">
-                        <p className="font-semibold text-[#00d4ff] text-sm">
-                          🎯 {answer.expertName}
-                        </p>
-                      </Link>
-                    </div>
+                    <button onClick={() => handleStartChat(answer.expertId)} className="flex justify-between items-start mb-2 gap-4 cursor-pointer">
+                      <div className="bg-cyan-700 rounded-full px-2"> {answer.expertName.charAt(0).toUpperCase()}</div>
+                      {answer.expertName}
+                    </button>
                     <p className="text-[#a0a0b0] text-sm leading-relaxed">
                       {answer?.answerBody}
                     </p>
