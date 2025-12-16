@@ -1,13 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
-import Link from "next/link";
 
 import axios from "axios";
-import { startConversation } from "@/lib/apiFunctions/chatFunctions";
 
-export default function QueryDetailModal({ query, onClose, isClient }) {
-  const [liked, setLiked] = useState(false);
+export default function QueryDetailModal({ query, onClose, isAdmin }) {
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +40,7 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
   };
   
 
-  const handleDelete = async (queryId, clientId) => {
+  const handleDelete = async (queryId) => {
   const confirmed = window.confirm(
       "Are you sure you want to delete this query?"
     );
@@ -53,9 +50,7 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
     try {
       setLoading(true);
 
-      await axios.delete(`/api/client/queries/${queryId}`, {
-        data: { clientId },
-      });
+      await axios.delete(`/api/admin/queries/${queryId}`);
       
       window.location.reload();
 
@@ -66,16 +61,6 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
       setLoading(false);
     }
   };
-
-    const handleStartChat = async (expertId) => {
-      try {
-        const conversationId = await startConversation(expertId);
-        window.location.href = `/client/messages/${conversationId}`;
-      } catch (err) {
-        console.error(err);
-        alert("Failed to start chat");
-      }
-    };
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-4 animate-fadeIn">
@@ -122,7 +107,7 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
               <span className=" bg-[#00d4ff]/20 text-[#00d4ff] px-2 py-1 rounded-full text-xs font-semibold flex items-center">
                 {query.categoryName || query.name}
               </span>
-              {isClient && (
+              {isAdmin && (
                 <div className="deletebutton">
                   <button
                     className={`p-1 rounded-2xl transition ${
@@ -130,7 +115,7 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
                         ? "bg-red-300 cursor-not-allowed"
                         : "bg-red-700 hover:bg-red-800"
                     }`}
-                    onClick={() => handleDelete(query.queryId, query.clientId)}
+                    onClick={() => handleDelete(query.queryId)}
                     disabled={loading}
                     title="Delete query"
                   >
@@ -164,7 +149,7 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
                     key={idx}
                     className="bg-[#0f0f23] border border-[#2a2a3e] rounded-lg p-4"
                   >
-                    <button onClick={() => handleStartChat(answer.expertId)} className="flex justify-between items-start mb-2 gap-4 cursor-pointer">
+                    <button className="flex justify-between items-start mb-2 gap-4 cursor-pointer">
                       <div className="bg-cyan-700 rounded-full px-2"> {answer.expertName.charAt(0).toUpperCase()}</div>
                       {answer.expertName}
                     </button>
