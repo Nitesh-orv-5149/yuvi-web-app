@@ -41,7 +41,7 @@ export default function CreateQueryPage() {
     <div className="animate-fadeIn max-w-2xl">
       <div className="mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-          <span className="bg-gradient-to-r from-[#00d4ff] to-[#ff006e] bg-clip-text text-transparent">
+          <span className="bg-cyan-300 bg-clip-text text-transparent">
             Ask a Question
           </span>
         </h1>

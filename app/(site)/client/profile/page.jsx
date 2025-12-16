@@ -53,10 +53,6 @@ export default function ProfilePage() {
           isClient={true}
         />
       )}
-
-      <div className="actions mt-3">
-        <ProfileActions />
-      </div>
     </div>
   );
 }
