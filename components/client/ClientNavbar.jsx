@@ -1,11 +1,10 @@
-'use client';
-import { useSession, signOut } from 'next-auth/react';
-import Link from 'next/link';
-import Image from 'next/image';
+"use client";
+import { useSession, signOut } from "next-auth/react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function ClientNavbar() {
   const { data: session } = useSession();
-  
 
   return (
     <nav className="sticky top-0 z-50 bg-blue-1000/80 backdrop-blur-md border-b border-[#2e2e49]">
@@ -34,32 +33,20 @@ export default function ClientNavbar() {
           {/* Right side: user + logout */}
           {session ? (
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="hidden sm:flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
-                  {session.user?.name?.charAt(0).toUpperCase() || 'U'}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs sm:text-sm font-semibold text-white line-clamp-1">
-                    {session.user?.name}
-                  </span>
-                  <span className="text-[10px] text-[#a0a0b0] line-clamp-1">
-                    {session.user?.email}
-                  </span>
-                </div>
-              </div>
-
               <button
-                onClick={() => signOut({ callbackUrl: '/auth' })}
+                onClick={() => signOut({ callbackUrl: "/auth" })}
                 className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-purple-600/20 text-purple-300 rounded-lg hover:bg-purple-500/30 border border-purple-500/40 transition font-medium"
               >
                 Sign Out
               </button>
             </div>
-          ) :
-            <Link href={'/auth'}>
-             <button className='bg-indigo-600 px-3 py-2 rounded-full hover:bg-indigo-400 transition-all '>Sign In</button>
+          ) : (
+            <Link href={"/auth"}>
+              <button className="bg-indigo-600 px-3 py-2 rounded-full hover:bg-indigo-400 transition-all ">
+                Sign In
+              </button>
             </Link>
-          }
+          )}
         </div>
       </div>
     </nav>

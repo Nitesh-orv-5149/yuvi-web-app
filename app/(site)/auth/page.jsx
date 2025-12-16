@@ -158,7 +158,7 @@ export default function AuthPage() {
             throw new Error(msg);
         }
         
-        await signIn('credentials', { identifier: email, password, role, redirect: true, callbackUrl: role === "client" ? "/client" : "/expert/home" });
+        await signIn('credentials', { identifier: email, password, role, redirect: true, callbackUrl: role === "client" ? "/" : "/expert/home" });
       }
       
     } catch (error) {
