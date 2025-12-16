@@ -40,6 +40,7 @@ export default function QueryDetailModal({ query, onClose, isClient }) {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+  
 
   const handleDelete = async (queryId, clientId) => {
   const confirmed = window.confirm(
