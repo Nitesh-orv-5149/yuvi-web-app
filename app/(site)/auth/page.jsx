@@ -15,8 +15,7 @@ import {
 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 // --- Reusable UI Components ---
 
@@ -82,7 +81,6 @@ const RoleToggle = ({ role, setRole }) => (
 
 export default function AuthPage() {
 
-  const params = useSearchParams();
   const router = useRouter();
 
   const [isLogin, setIsLogin] = useState(true);
