@@ -45,16 +45,18 @@ export default function AdminLogin() {
     setError("");
 
     const { email, password } = formData;
+    console.log("Attempting admin login with:", email, password);
 
     const res = await signIn("credentials", {
       identifier: email,
       password: password,
       role: "admin",
-      redirect: true,
-      callbackUrl: "/admin",
+      redirect: false,
     });
 
     if (res?.error) setError("Invalid email or password");
+
+    window.location.href = "/admin";
 
     setLoading(false);
   };
@@ -122,6 +124,11 @@ export default function AdminLogin() {
                 </>
               )}
             </button>
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-xl px-4 py-2 mb-4 text-center">
+                {error}
+              </div>
+            )}
           </form>
         </div>
       </div>
