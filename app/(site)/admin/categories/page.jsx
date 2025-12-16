@@ -118,11 +118,9 @@ export default function CategoriesPage() {
 
 function CategoryForm({ initial, onCancel, onSave }) {
   const [name, setName] = useState(initial?.name || "");
-  const [desc, setDesc] = useState(initial?.desc || "");
 
   useEffect(() => {
     setName(initial?.name || "");
-    setDesc(initial?.desc || "");
   }, [initial]);
   return (
     <div className="text-white space-y-4">
@@ -141,20 +139,11 @@ function CategoryForm({ initial, onCancel, onSave }) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-
-        <div>
-          <label className="text-sm text-blue-200">Description</label>
-          <input
-            className="w-full px-3 py-2 rounded-lg bg-[#0f1116] border border-white/10 text-white"
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-          />
-        </div>
       </div>
 
       <div className="flex justify-end gap-3 pt-2">
         <button onClick={onCancel} className="px-4 py-2 rounded-lg bg-white/5 text-blue-200">Cancel</button>
-        <button onClick={() => onSave({ name, desc })} className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <button onClick={() => onSave({ name })} className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           Save
         </button>
       </div>

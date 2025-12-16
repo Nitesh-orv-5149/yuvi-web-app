@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { categories } from "@/lib/schema"; // ensure schema/index.js exports categories
 import { checkAuthLoginAdmin } from "@/lib/auth/authUtils";
 import { eq } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 // verify user session (only admin allowed)
 async function verifyAdmin(req) {
@@ -22,9 +23,13 @@ export async function GET() {
   }
 }
 
-//  POST
 export async function POST(req) {
-  const { name, desc } = await req.json();
-  await db.insert(categories).values({ name, desc });
+  const { name } = await req.json();
+
+  await db.insert(categories).values({
+    categoryId: randomUUID(),
+    name,
+  });
+
   return Response.json({ message: "Category added" });
 }

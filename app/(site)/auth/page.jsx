@@ -121,10 +121,15 @@ export default function AuthPage() {
           redirect: false,
         });
         
-        if (result.error) {
-          setAuthError("Credentials are wrong");
-          throw new Error(result.error);
+        if (result?.error) {
+          if (result.error === "EXPERT_NOT_VERIFIED") {
+            setAuthError("Your expert account is not verified yet.");
+          } else {
+            setAuthError("Credentials are wrong");
+          }
+          return;
         }
+
 
         router.push(role === "client" ? "/" : "/expert/home");
         return;
