@@ -7,7 +7,7 @@ import { requireSession } from "@/lib/auth/requireSession";
 export async function POST(req) {
   try {
     const session = await requireSession();
-    const { conversationId, content } = await req.json();
+    const { conversationId, content, isImage } = await req.json();
 
     if (!content) {
       return Response.json({ error: "Empty message" }, { status: 400 });
@@ -23,6 +23,7 @@ export async function POST(req) {
       senderId: user.id,
       senderRole: user.role,
       content,
+      isImage: Boolean(isImage)
     });
 
     await db
@@ -41,11 +42,15 @@ export async function POST(req) {
         senderId: user.id,
         senderRole: user.role,
         content,
+        isImage: Boolean(isImage),
         createdAt: new Date()
       }
     })  
   } catch (err) {
     console.error("SEND MESSAGE ERROR:", err);
-    return Response.json({ error: "Server error" }, { status: 500 });
+    return Response.json(
+      { error: err.message || err },
+      { status: 500 }
+    );
   }
 }

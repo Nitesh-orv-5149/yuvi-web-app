@@ -1,203 +1,215 @@
-"use client";
-import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, Send, Plus, Image, X } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { getMessages, sendMessage } from "@/lib/apiFunctions/chatFunctions";
-import Loading from "@/components/ui/Loading";
+"use client"
 
+import { useEffect, useState, useRef } from "react"
+import { ArrowLeft, Send, Plus, X } from "lucide-react"
+import { useParams, useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+
+import Loading from "@/components/ui/Loading"
+import uploadImageToCloudinary from "@/lib/cloudinary/imageUpload"
+import { sendMessage, getMessages } from "@/lib/apiFunctions/chatFunctions"
 
 export default function ChatPage() {
-  const params = useParams();
-  const router = useRouter();
-  const { data: session } = useSession();
-  const currentUserId = session?.user?.id;
-  const conversationId = params.conversationId;
-  
-  const [messagesList, setMessagesList] = useState([]);
-  const [messageInput, setMessageInput] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [showImagePicker, setShowImagePicker] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const fileInputRef = useRef(null);
+  const { conversationId } = useParams()
+  const router = useRouter()
+  const { data: session } = useSession()
 
+  const currentUserId = session?.user?.id
 
+  const [messagesList, setMessagesList] = useState([])
+  const [messageInput, setMessageInput] = useState("")
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [fullscreenImage, setFullscreenImage] = useState(null)
+
+  const fileInputRef = useRef(null)
+
+  // 🔄 Load messages
   useEffect(() => {
     const load = async () => {
       try {
-        const msgs = await getMessages(conversationId);
-        setMessagesList(msgs.reverse());
+        const msgs = await getMessages(conversationId)
+        setMessagesList(msgs.reverse())
       } catch (err) {
-        console.error("MESSAGE FETCH FAILED", err);
+        console.error("MESSAGE FETCH FAILED", err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    load();
-  }, [conversationId]);
-
-
-  const handleSendMessage = async () => {
-    if (!messageInput.trim() && selectedImages.length === 0) return;
-    const text = messageInput;
-    setMessageInput("");
-    try {
-      const res = await sendMessage(conversationId, text, selectedImages);
-      setMessagesList((prev) => [...prev, res.message]);
-      setSelectedImages([]);
-    } catch (err) {
-      console.error("SEND MESSAGE FAILED:", err);
-      setMessageInput(text);
     }
-  };
+    load()
+  }, [conversationId])
 
-
+  // 🖼 pick ONE image
   const handleImageSelect = (e) => {
-    if (e.target.files) {
-      const newImages = Array.from(e.target.files);
-      setSelectedImages(prev => [...prev, ...newImages]);
-      setShowImagePicker(false);
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setSelectedImage(file)
+    setMessageInput("") // enforce one-at-a-time
+  }
+
+  // ❌ remove image
+  const removeImage = () => {
+    setSelectedImage(null)
+  }
+
+  // 🚀 SEND (text OR image)
+  const handleSendMessage = async () => {
+    // nothing to send
+    if (!messageInput.trim() && !selectedImage) return
+
+    // block mixed content
+    if (messageInput.trim() && selectedImage) return
+
+    try {
+      // 🖼 IMAGE MESSAGE
+      if (selectedImage) {
+        const res = await uploadImageToCloudinary(
+          selectedImage,
+          conversationId,
+          currentUserId,
+          session.user.role
+        )
+
+        if (res?.error) throw new Error(res.error)
+
+        // optimistic UI
+        setMessagesList((prev) => [...prev, res])
+
+        setSelectedImage(null)
+        return
+      }
+
+      // 💬 TEXT MESSAGE
+      const res = await sendMessage(conversationId, messageInput)
+
+      setMessagesList((prev) => [...prev, res.message])
+      setMessageInput("")
+    } catch (err) {
+      console.error("SEND FAILED:", err)
     }
-  };
+  }
 
-
-  const removeImage = (indexToRemove) => {
-    setSelectedImages(prev => prev.filter((_, index) => index !== indexToRemove));
-  };
-
-
-  if (loading) return <Loading />;
-
+  if (loading) return <Loading />
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] bg-slate-950">
-      <div className="flex items-center gap-4 p-4 border-b border-slate-800 bg-slate-900/50">
+
+      {/* Header */}
+      <div className="flex items-center gap-4 p-4 border-b border-slate-800">
         <button
           onClick={() => router.back()}
-          className="p-2 -ml-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full"
+          className="p-2 text-slate-400 hover:text-white"
         >
           <ArrowLeft size={20} />
         </button>
-        <h3 className="font-bold text-white text-sm">Chat</h3>
+        <h3 className="text-white font-semibold">Chat</h3>
       </div>
 
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messagesList.map((msg, idx) => {
-          const isMine = msg.senderId === currentUserId;
+          const isMine = msg.senderId === currentUserId
           return (
-            <div key={idx} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[80%] px-5 py-3 rounded-2xl ${
-                  isMine
-                    ? "bg-cyan-600 text-white rounded-br-sm"
-                    : "bg-slate-800 text-slate-200 rounded-bl-sm border border-slate-700"
-                }`}
-              >
-                {msg.content}
-                {msg.images && msg.images.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {msg.images.map((img, imgIdx) => (
-                      <img
-                        key={imgIdx}
-                        src={img}
-                        alt="Sent image"
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div
+              key={idx}
+              className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+            >
+              {msg.isImage ? (
+                // 🖼 IMAGE → NO BUBBLE
+                <img
+                  src={msg.content}
+                  alt="sent"
+                  onClick={() => setFullscreenImage(msg.content)}
+                  className="w-40 h-40 rounded-xl object-cover cursor-pointer hover:opacity-90"
+                />
+              ) : (
+                // 💬 TEXT → BUBBLE
+                <div
+                  className={`max-w-[75%] px-4 py-3 rounded-2xl ${
+                    isMine
+                      ? "bg-cyan-600 text-white"
+                      : "bg-slate-800 text-slate-200"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              )}
             </div>
-          );
+          )
         })}
       </div>
 
-
-      <div className="fixed bottom-20 left-0 right-0 p-4 bg-slate-900 border-t border-slate-800">
-        <div className="flex flex-col gap-2">
-          {selectedImages.length > 0 && (
-            <div className="flex flex-wrap gap-2 p-3 bg-slate-800 rounded-lg">
-              {selectedImages.map((img, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={URL.createObjectURL(img)}
-                    alt="Preview"
-                    className="w-12 h-12 object-cover rounded"
-                  />
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="relative flex items-center gap-2">
-            <input
-              type="text"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-              placeholder="Type a message..."
-              className="flex-1 pl-12 pr-12 py-3 bg-slate-950 border border-slate-800 rounded-full text-white placeholder-slate-500"
+      {/* Input */}
+      <div className="p-4 border-t border-slate-800">
+        {selectedImage && (
+          <div className="mb-2 relative w-fit">
+            <img
+              src={URL.createObjectURL(selectedImage)}
+              className="w-20 h-20 rounded object-cover"
             />
-
             <button
-              onClick={() => setShowImagePicker(true)}
-              className="absolute left-3 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
+              onClick={removeImage}
+              className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
             >
-              <Plus size={18} />
-            </button>
-
-            <button
-              onClick={handleSendMessage}
-              disabled={!messageInput.trim() && selectedImages.length === 0}
-              className="absolute right-2 p-2 bg-cyan-500 text-white rounded-full disabled:opacity-50 hover:bg-cyan-600 disabled:hover:bg-cyan-500 transition-colors"
-            >
-              <Send size={16} />
+              <X size={14} className="text-white" />
             </button>
           </div>
+        )}
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 text-slate-400 hover:text-white"
+          >
+            <Plus size={18} />
+          </button>
+
+          <input
+            type="text"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            placeholder="Type a message"
+            className="flex-1 bg-slate-900 text-white px-4 py-2 rounded-full"
+          />
+
+          <button
+            onClick={handleSendMessage}
+            className="p-2 bg-cyan-500 rounded-full text-white disabled:opacity-50"
+            disabled={!messageInput.trim() && !selectedImage}
+          >
+            <Send size={16} />
+          </button>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageSelect}
+          />
         </div>
       </div>
+      {fullscreenImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <img
+            src={fullscreenImage}
+            alt="fullscreen"
+            className="max-w-[95vw] max-h-[95vh] object-contain"
+            onClick={(e) => e.stopPropagation()} // prevent close when clicking image
+          />
 
-
-      {showImagePicker && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end justify-center p-4 z-50">
-          <div className="bg-slate-900 rounded-2xl w-full max-w-md max-h-[70vh] overflow-y-auto border border-slate-800">
-            <div className="flex items-center justify-between p-6 border-b border-slate-800">
-              <h3 className="font-bold text-white text-lg">Select Images</h3>
-              <button
-                onClick={() => setShowImagePicker(false)}
-                className="p-2 hover:bg-slate-800 rounded-full"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-6">
-              <div
-                className="border-2 border-dashed border-slate-700 rounded-xl p-8 text-center hover:border-slate-600 transition-colors cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Image className="mx-auto mb-4 text-slate-400" size={48} />
-                <p className="text-slate-400 mb-1">Click to select images</p>
-                <p className="text-sm text-slate-500">PNG, JPG up to 10MB</p>
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageSelect}
-                className="hidden"
-              />
-            </div>
-          </div>
+          <button
+            onClick={() => setFullscreenImage(null)}
+            className="absolute top-4 right-4 text-red-400 rounded-full p-2 hover:bg-black"
+          >
+            <X size={24} />
+          </button>
         </div>
       )}
     </div>
-  );
+  )
 }
