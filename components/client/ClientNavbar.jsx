@@ -25,7 +25,7 @@ export default function ClientNavbar() {
                 YuviCollab
               </span>
               <span className="text-[10px] sm:text-xs text-[#a0a0b0]">
-                Client Portal
+                Student DashBoard
               </span>
             </div>
           </Link>
