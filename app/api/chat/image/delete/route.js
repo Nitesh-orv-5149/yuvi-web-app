@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import cloudinary from "@/lib/cloudinary"
+import cloudinary from "@/lib/cloudinary/cloudinaryConfig"
 
 export async function POST(req) {
   const { publicId } = await req.json()
