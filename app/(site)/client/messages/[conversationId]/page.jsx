@@ -21,6 +21,7 @@ export default function ChatPage() {
   const [selectedImage, setSelectedImage] = useState(null)
   const [loading, setLoading] = useState(true)
   const [fullscreenImage, setFullscreenImage] = useState(null)
+  const [sending, setSending] = useState(false)
 
   const fileInputRef = useRef(null)
 
@@ -55,11 +56,15 @@ export default function ChatPage() {
 
   // 🚀 SEND (text OR image)
   const handleSendMessage = async () => {
+    if (sending) return 
+    
     // nothing to send
     if (!messageInput.trim() && !selectedImage) return
-
+    
     // block mixed content
     if (messageInput.trim() && selectedImage) return
+    
+    setSending(true)
 
     try {
       // 🖼 IMAGE MESSAGE
@@ -80,13 +85,15 @@ export default function ChatPage() {
         return
       }
 
-      // 💬 TEXT MESSAGE
+      // TEXT MESSAGE
       const res = await sendMessage(conversationId, messageInput)
 
       setMessagesList((prev) => [...prev, res.message])
       setMessageInput("")
     } catch (err) {
       console.error("SEND FAILED:", err)
+    } finally {
+      setSending(false)
     }
   }
 
@@ -169,16 +176,21 @@ export default function ChatPage() {
             type="text"
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
-            placeholder="Type a message"
-            className="flex-1 bg-slate-900 text-white px-4 py-2 rounded-full"
+            placeholder={selectedImage ? "Image selected" : "Type a message"}
+            disabled={!!selectedImage}
+            className="flex-1 bg-slate-900 text-white px-4 py-2 rounded-full disabled:opacity-50"
           />
 
           <button
             onClick={handleSendMessage}
-            className="p-2 bg-cyan-500 rounded-full text-white disabled:opacity-50"
-            disabled={!messageInput.trim() && !selectedImage}
+            disabled={sending || (!messageInput.trim() && !selectedImage)}
+            className="p-2 bg-cyan-500 rounded-full text-white disabled:opacity-50 flex items-center justify-center"
           >
-            <Send size={16} />
+            {sending ? (
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Send size={16} />
+            )}
           </button>
 
           <input

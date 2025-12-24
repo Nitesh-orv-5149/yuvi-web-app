@@ -25,7 +25,6 @@ export async function GET(req) {
       .limit(20)
       .offset(cursor);
 
-    console.log("messages: ", result)
     return Response.json(result);
 
   } catch (err) {
