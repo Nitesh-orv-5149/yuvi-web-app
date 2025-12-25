@@ -11,7 +11,7 @@ export default function QueryCard({ query, onClick }) {
     >
       <div className="flex gap-3">
         {/* Avatar */}
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#8800ff] flex items-center justify-center flex-shrink-0 text-white font-bold text-sm sm:text-base shadow-md">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-cyan-600 flex items-center justify-center flex-shrink-0 text-white font-bold text-sm sm:text-base shadow-md">
           {query.clientName ? query.clientName.charAt(0).toUpperCase() : session.user.name.charAt(0).toUpperCase()}
         </div>
 

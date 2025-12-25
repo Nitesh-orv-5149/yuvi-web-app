@@ -110,7 +110,7 @@ export default function QueryForm({ onSubmit, isLoading }) {
       <button
         type="submit"
         disabled={!isValid || isLoading}
-        className="w-full py-3 px-4 bg-gradient-to-r from-[#00d4ff] to-[#8800ff] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+        className="w-full py-3 px-4 bg-indigo-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#00d4ff]/20 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
       >
         {isLoading ? (
           <>

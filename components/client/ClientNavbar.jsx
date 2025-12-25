@@ -21,7 +21,7 @@ export default function ClientNavbar() {
               priority
             />
             <div className="flex flex-col">
-              <span className="font-bold text-sm sm:text-base bg-gradient-to-r from-purple-400 to-cyan-300 bg-clip-text text-transparent">
+              <span className="font-bold text-sm sm:text-base bg-indigo-500 bg-clip-text text-transparent">
                 YuviCollab
               </span>
               <span className="text-[10px] sm:text-xs text-[#a0a0b0]">

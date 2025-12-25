@@ -6,8 +6,19 @@ import { requireSession } from "@/lib/auth/requireSession";
 
 export async function POST(req) {
   try {
-    const session = await requireSession();
+    let session = null;
+
+    try {
+      session = await requireSession();
+    } catch {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
     const { otherUserId } = await req.json();
+
+    if (!session) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const user = session.user;
     const isClient = user.role === "client";

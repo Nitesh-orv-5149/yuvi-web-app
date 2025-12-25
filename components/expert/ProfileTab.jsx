@@ -12,6 +12,7 @@ export default function ProfileTab() {
 
   const { data: session, status } = useSession();
   const user = session?.user
+  console.log("session user in profile tab: ", user)
 
   const [answeredQueries, setAnsweredQueries] = useState([])
 
