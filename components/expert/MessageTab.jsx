@@ -34,8 +34,11 @@ export default function InboxPage() {
   return (
     <div className="pb-24 pt-6 px-4">
       <h2 className="text-2xl font-bold mb-6 text-cyan-400">Messages</h2>
+      {inbox.length === 0 && (
+        <p className="text-slate-500">No conversations yet.</p>
+      )}
 
-      <div className="space-y-3">
+      <div className="flex flex-col gap-4">
         {inbox.map((convo) => {
           const name = userRole === "expert" ? convo.clientName : convo.expertName;
 
@@ -60,6 +63,8 @@ export default function InboxPage() {
             </Link>
           );
         })}
+
+        <p className="text-sm mt-12 text-gray-400">To start a conversation, click on expert avatar in the answers for queries in home tab.</p>
       </div>
     </div>
   );

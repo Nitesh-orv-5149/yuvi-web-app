@@ -181,12 +181,17 @@ export default function AuthPage() {
           throw new Error(msg);
         }
 
+        if (role === "expert") {
+          router.push("/auth/not-verified");
+          return;
+        }
+
         await signIn("credentials", {
           identifier: email,
           password,
           role,
           redirect: true,
-          callbackUrl: role === "client" ? "/" : "/expert/home",
+          callbackUrl: "/",
         });
       }
     } catch (error) {
@@ -279,7 +284,7 @@ export default function AuthPage() {
                           })
                         }
                         required
-                        className="w-full border rounded-md px-3 py-2 bg-slate-900/50 border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-slate-900"
+                        className="w-full border rounded-full px-3 py-2 bg-slate-900/50 border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-slate-900"
                       >
                         <option value="" disabled>
                           Select a category
@@ -306,21 +311,10 @@ export default function AuthPage() {
               </div>
             )}
 
-            {isLogin && (
-              <div className="flex justify-end">
-                <a
-                  href="#"
-                  className="text-xs text-slate-400 hover:text-blue-400 transition-colors"
-                >
-                  Forgot Password?
-                </a>
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transition-all transform active:scale-[0.98] mt-6 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transition-all transform active:scale-[0.98] mt-12 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -367,12 +361,6 @@ export default function AuthPage() {
           </p>
         </div>
       </div>
-
-      {role === "expert" && !isLogin && (
-        <div className="absolute top-20 right-20 hidden lg:block animate-pulse">
-          <Brain className="w-32 h-32 text-blue-500/10 rotate-12" />
-        </div>
-      )}
     </div>
   );
 }
