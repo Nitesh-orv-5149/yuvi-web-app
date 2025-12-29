@@ -72,7 +72,7 @@ const RoleToggle = ({ role, setRole }) => (
       }`}
     >
       <User className="w-4 h-4" />
-      Client
+      Student
     </button>
     <button
       onClick={() => setRole("expert")}

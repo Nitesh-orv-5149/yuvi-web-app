@@ -64,7 +64,9 @@ export default function InboxPage() {
           );
         })}
 
-        <p className="text-sm mt-12 text-gray-400">To start a conversation, click on expert avatar in the answers for queries in home tab.</p>
+        {session?.user?.role === "client" && (
+          <p className="text-sm mt-12 text-gray-400">To start a conversation, click on expert avatar in the answers for queries in home tab.</p>
+        )}
       </div>
     </div>
   );
