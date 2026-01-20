@@ -94,7 +94,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState("client"); // 'client' | 'expert'
   const [loading, setLoading] = useState(false);
-  const [categories, setCategory] = useState(null);
+  const [categories, setCategory] = useState([]);
   const [authError, setAuthError] = useState("");
   const [formData, setFormData] = useState({
     username: "",
@@ -276,7 +276,7 @@ export default function AuthPage() {
                     <div className="relative">
                       <select
                         name="categoryId"
-                        value={formData.categoryId}
+                        value={formData.categoryId || ""}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
