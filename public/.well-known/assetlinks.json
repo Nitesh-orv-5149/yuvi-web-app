@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.yuvicollab.pwa.twa",
-        "sha256_cert_fingerprints": ["93:F4:01:28:12:4D:64:EE:6B:32:C1:0E:78:BA:A8:BB:74:8A:C4:D4:B5:55:62:37:41:6F:EE:74:DC:98:B4:9E"]
-      }
-    }]
