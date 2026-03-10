@@ -1,8 +1,16 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.yuvicollab.pwa.twa",
-        "sha256_cert_fingerprints": ["93:F4:01:28:12:4D:64:EE:6B:32:C1:0E:78:BA:A8:BB:74:8A:C4:D4:B5:55:62:37:41:6F:EE:74:DC:98:B4:9E"]
-      }
-    }]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.yuvicollab.pwa.twa",
+      "sha256_cert_fingerprints": [
+        "93:F4:01:28:12:4D:64:EE:6B:32:C1:0E:78:BA:A8:BB:74:8A:C4:D4:B5:55:62:37:41:6F:EE:74:DC:98:B4:9E",
+        "9B:D1:23:6E:A3:73:CB:E2:EA:11:BB:A1:91:8F:EE:78:6A:00:70:9D:C8:7B:61:54:97:BE:9F:21:B1:0B:6D:71"
+      ]
+    }
+  }
+]
